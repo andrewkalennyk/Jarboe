@@ -32,3 +32,22 @@ public function showImageStorage()
     return View::make('admin::image_storage');
 } // end showImageStorage
 ```
+### Translator
+```php
+// get a translator instance and translates
+$translator = \Yaro\Jarboe\Helpers\Translate::getInstance();
+$translates = $translator->getAllStatic();
+```
+
+```html
+// set the current language and translates array into Translator object
+<script>
+    Translator.lang = '{{App::getLocale()}}';
+    Translator.translates = {{json_encode($translates)}};
+</script>
+```
+
+```javascript
+// get localized data like this
+Translator.t('Спасибо, ваша заявка принята!')
+```

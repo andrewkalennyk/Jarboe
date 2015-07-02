@@ -1,10 +1,10 @@
 {
-    "name": "yaro/jarboe",
+    "name": "oles-kashchenko/jarboe",
     "description": "",
     "authors": [
         {
-            "name": "Yaro",
-            "email": "12fcv4@gmail.com"
+            "name": "Oles Kashchenko",
+            "email": "oleskashchenko@gmail.com"
         }
     ],
     "require": {

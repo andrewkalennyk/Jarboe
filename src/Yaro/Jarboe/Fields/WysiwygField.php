@@ -39,7 +39,7 @@ class WysiwygField extends AbstractField
         $input->name  = $this->getFieldName();
         $input->options = $this->getWysiwygOptions();
         $input->extraOptions = $this->getWysiwygOptions();
-        
+
         $action = $this->definition['options']['action_url'];
         if (isset($this->definition['options']['action_url_tree'])) {
             $action = $this->definition['options']['action_url_tree'];
@@ -53,7 +53,7 @@ class WysiwygField extends AbstractField
     {
         // FIXME:
         $options = $this->getAttribute('editor-options', array());
-        
+
         if ($this->getAttribute('wysiwyg', 'redactor') == 'summernote') {
             if (!array_key_exists('lang', $options)) {
                 $options['lang'] = 'ru-RU';

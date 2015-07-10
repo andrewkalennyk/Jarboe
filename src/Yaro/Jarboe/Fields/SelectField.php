@@ -53,9 +53,10 @@ class SelectField extends AbstractField
         $table->options = $this->getAttribute('options');
 
         // default value on creating
-        if (!$table->selected) {
-            $table->selected = $this->getAttribute('default');
-        }
+        // fixme:
+        //if (!$table->selected) {
+        //    $table->selected = $this->getAttribute('default');
+        //}
 
         return $table->render();
     } // end getEditInput

@@ -971,8 +971,8 @@ console.log(values);
                         window.history.back();
                         return;
                     }
-                    
-                    jQuery('#wid-id-1').find('tbody').prepend(response.html);
+
+                    jQuery('#wid-id-1').find('tbody').first().prepend(response.html);
 
                     TableBuilder.removeInputValues(TableBuilder.form);
                     jQuery(TableBuilder.form).modal('hide');

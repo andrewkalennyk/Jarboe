@@ -33,18 +33,21 @@ public function showImageStorage()
 } // end showImageStorage
 ```
 ### Translator
-```php
-// get a translator instance and translates
-$translator = \Yaro\Jarboe\Helpers\Translate::getInstance();
-$translates = $translator->getAllStatic();
-```
-
 ```html
+// include translator script
+<script src="{{asset('packages/yaro/jarboe/js/translator.js')}}"></script>
+
 // set the current language and translates array into Translator object
 <script>
     Translator.lang = '{{App::getLocale()}}';
     Translator.translates = {{json_encode($translates)}};
 </script>
+```
+
+```php
+// get a translator instance and translates
+$translator = \Yaro\Jarboe\Helpers\Translate::getInstance();
+$translates = $translator->getAllStatic();
 ```
 
 ```javascript

@@ -21,9 +21,10 @@ View::composer('admin::tb.storage.image.images', function($view) {
     $model  = Config::get('jarboe::images.models.image');
     $images = $model::search()
                     ->orderBy('created_at', 'desc')
-                    ->skip(0)->limit($perPage)
+                    ->skip(0)
+                    ->limit($perPage)
                     ->get();
-    
+
     $view->with('images', $images)->with('fields', $fields);
 });
 
@@ -32,4 +33,12 @@ View::composer('admin::tb.storage.file.files', function($view) {
     $model = Config::get('jarboe::files.models.file');
     $files = $model::orderBy('id', 'desc')->get();
     $view->with('files', $files);
+});
+
+View::composer('admin::tb.storage.image.images_search', function($view) {
+    $model  = Config::get('jarboe::images.models.tag');
+
+    $tags = $model::all();
+
+    $view->with('tags', $tags);
 });

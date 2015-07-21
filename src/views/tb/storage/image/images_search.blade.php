@@ -7,6 +7,7 @@
             <th width="35%">Название</th>
             <th width="10%">Создана (от)</th>
             <th width="10%">Создана (до)</th>
+            <th width="10%">Теги</th>
             <th width="1%"></th>
         </tr>
     </thead>
@@ -30,12 +31,28 @@
                 </div>
             </td>
             <td>
-                <a onclick="Superbox.searchImages(this);" 
-                href="javascript:void(0);" 
-                class="btn btn-default btn-sm">Поиск</a>
+                <div class="input-group" style="width: 190px;">
+                    <select name="_jsearch[tags][]" id="images-tag-search" multiple="multiple" style="width: 190px; display: block;">
+                        <option value=""></option>
+                        @if ($tags->count())
+                            @foreach($tags as $tag)
+                                <option value="{{ $tag->id }}">{{ $tag->title }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </td>
+            <td>
+                <a onclick="Superbox.searchImages(this);" href="javascript:void(0);" class="btn btn-default btn-sm">Поиск</a>
             </td>
         </tr>
     </tbody>
 </table>
 </form>
 </div>
+
+<script>
+    jQuery(document).ready(function() {
+        jQuery('#images-tag-search').select2();
+    });
+</script>

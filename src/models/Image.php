@@ -17,7 +17,18 @@ class Image extends AbstractImageStorage
     {
         return $query->orderBy('priority', $direction);
     } // end priority
-    
+
+    public function scopeByTags($query, $tags = array())
+    {
+        if (!$tags) {
+            return $query;
+        }
+
+        $relatedImagesIds = \DB::table('j_images2tags')->whereIn('id_tag', $tags)->lists('id_image');
+
+        return $query->whereIn('id', $relatedImagesIds);
+    } // end scopeByTags
+
     public function getInfo($values = false)
     {
         $info = $values ? : $this->info;
@@ -29,7 +40,6 @@ class Image extends AbstractImageStorage
         $ident = $ident ? '_' . $ident : '';
         $source = 'source' . $ident;
 
-        
         return $this->$source;
     } // end getSource
     
@@ -63,19 +73,29 @@ class Image extends AbstractImageStorage
             }
             
             if (is_array($value)) {
-                $value['to']   = $value['to'] ? : '12/12/2222';
-                $value['from'] = $value['from'] ? : '12/12/1971';
-                
-                // HACK: MariaDB date() hack for timestamp
-                $from = date('Y-m-d H:i:s', strtotime(preg_replace('~/~', '-', $value['from'])));
-                $to   = date('Y-m-d H:i:s', strtotime(preg_replace('~/~', '-', $value['to'])));
-                
-                $query->whereBetween($column, array($from, $to));
+                if ($column == 'created_at') {
+                    $value['to']   = $value['to'] ? : '12/12/2222';
+                    $value['from'] = $value['from'] ? : '12/12/1971';
+
+                    // fixme: MARIA DB hack
+                    // $from = date('Y-m-d H:i:s', strtotime(preg_replace('~/~', '-', $value['from'])));
+                    // $to   = date('Y-m-d H:i:s', strtotime(preg_replace('~/~', '-', $value['to'])));
+
+                    $from = date('Y-m-d 00:00:00', strtotime($value['from']));
+                    $to   = date('Y-m-d 23:59:59', strtotime($value['to']));
+
+                    $query->whereBetween($column, array($from, $to));
+                } else if ($column == 'tags') {
+                    $query->byTags($value);
+                }
+
             } else {
                 $query->where($column, 'like', '%'. $value .'%');
             }
         }
-        
+
+        \Session::forget('_jsearch_images');
+
         return $query;
     } // end scopeSearch
     
@@ -83,5 +103,4 @@ class Image extends AbstractImageStorage
     {
         return true;
     } // end isImage
-
 }

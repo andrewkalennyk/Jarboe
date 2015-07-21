@@ -1,6 +1,6 @@
 'use strict';
 
-var Superbox = 
+var Superbox =
 {
 
     redactor: null,
@@ -20,31 +20,31 @@ var Superbox =
     {
         $('.superbox').SuperBox();
     }, // end init
-    
-    openCatalog: function(id) 
+
+    openCatalog: function(id)
     {
     }, // end openCatalog
-    
+
     showGalleryPreloader: function()
     {
         $('.j-galleries-preloader').show();
     }, // end showGalleryPreloader
-    
+
     hideGalleryPreloader: function()
     {
         $('.j-galleries-preloader').hide();
     }, // end hideGalleryPreloader
-    
-    onGalleryImagesPriorityChange: function(idGallery, order) 
+
+    onGalleryImagesPriorityChange: function(idGallery, order)
     {
-        var data = { 
-            query_type: 'image_storage', 
-            storage_type: 'change_gallery_images_priority', 
-            images: order, 
-            id_gallery: idGallery, 
-            '__node': TableBuilder.getUrlParameter('node') 
+        var data = {
+            query_type: 'image_storage',
+            storage_type: 'change_gallery_images_priority',
+            images: order,
+            id_gallery: idGallery,
+            '__node': TableBuilder.getUrlParameter('node')
         };
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -59,7 +59,7 @@ var Superbox =
             }
         });
     }, // end onGalleryImagesPriorityChange
-    
+
     deleteGalleryImageRelation: function(context, idImage, idGallery)
     {
         jQuery.SmartMessageBox({
@@ -69,14 +69,14 @@ var Superbox =
         }, function(ButtonPressed) {
             if (ButtonPressed === "Да") {
                 Superbox.showGalleryPreloader();
-                var data = { 
-                    query_type: 'image_storage', 
-                    storage_type: 'delete_image_from_gallery', 
-                    id_image: idImage, 
-                    id_gallery: idGallery, 
-                    '__node': TableBuilder.getUrlParameter('node') 
+                var data = {
+                    query_type: 'image_storage',
+                    storage_type: 'delete_image_from_gallery',
+                    id_image: idImage,
+                    id_gallery: idGallery,
+                    '__node': TableBuilder.getUrlParameter('node')
                 };
-    
+
                 jQuery.ajax({
                     type: "POST",
                     url: TableBuilder.getActionUrl(),
@@ -87,7 +87,7 @@ var Superbox =
                             $(context).parent().remove();
                             $("#sortable").sortable("refresh");
                             Superbox.hideGalleryPreloader();
-                            
+
                             TableBuilder.showSuccessNotification('Изображение удалено из галереи');
                         } else {
                             TableBuilder.showErrorNotification('Что-то пошло не так');
@@ -97,17 +97,17 @@ var Superbox =
             }
         });
     }, // end deleteGalleryImageRelation
-    
+
     editGalleryContent: function(context, idGallery)
     {
         Superbox.showGalleryPreloader();
         Superbox.closeGalleryContentForm();
-        
-        var data = { 
-            query_type: 'image_storage', 
-            storage_type: 'show_edit_gallery_content', 
-            id: idGallery, 
-            '__node': TableBuilder.getUrlParameter('node') 
+
+        var data = {
+            query_type: 'image_storage',
+            storage_type: 'show_edit_gallery_content',
+            id: idGallery,
+            '__node': TableBuilder.getUrlParameter('node')
         };
         jQuery.ajax({
             data: data,
@@ -125,12 +125,12 @@ var Superbox =
             }
         });
     }, // end editGalleryContent
-    
+
     closeGalleryContentForm: function()
     {
         $('.image-storage-edit-gallery-tr').remove();
     }, // end closeEditForm
-    
+
     uploadSingleImage: function(context, type, idImage)
     {
         var data = new FormData();
@@ -157,28 +157,28 @@ var Superbox =
             }
         });
     }, // end uploadSingleImage
-    
+
     showGalleryEditInput: function(context)
     {
         var $td = $(context).closest('td');
-        
+
         $td.find('.b-value').hide();
         $td.find('.b-input').show();
     }, // end showGalleryEditInput
-    
+
     closeGalleryEditInput: function(context)
     {
         var $td = $(context).closest('td');
-        
+
         var value = $td.find('.b-value').show().find('a').text().trim();
         $td.find('.b-input').hide().find('input').val(value);
     }, // end closeGalleryEditInput
-    
+
     saveGalleryEditInput: function(context, idGallery)
     {
         var $td = $(context).closest('td');
         var value = $td.find('.b-input').hide().find('input').val();
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -193,28 +193,28 @@ var Superbox =
             }
         });
     }, // end saveGalleryEditInput
-    
+
     showTagEditInput: function(context)
     {
         var $td = $(context).closest('td');
-        
+
         $td.find('.b-value').hide();
         $td.find('.b-input').show();
     }, // end showGalleryEditInput
-    
+
     closeTagEditInput: function(context)
     {
         var $td = $(context).closest('td');
-        
+
         var value = $td.find('.b-value').show().find('a').text().trim();
         $td.find('.b-input').hide().find('input').val(value);
     }, // end closeTagEditInput
-    
+
     saveTagEditInput: function(context, idTag)
     {
         var $td = $(context).closest('td');
         var value = $td.find('.b-input').hide().find('input').val();
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -229,7 +229,86 @@ var Superbox =
             }
         });
     }, // end saveTagEditInput
-    
+
+    editTagContent: function(context, idTag)
+    {
+        Superbox.showTagsPreloader();
+
+        //Superbox.closeGalleryContentForm();
+
+        var data = {
+            query_type: 'image_storage',
+            storage_type: 'show_edit_tags_content',
+            id: idTag,
+            '__node': TableBuilder.getUrlParameter('node')
+        };
+
+        jQuery.ajax({
+            data: data,
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            dataType: 'json',
+            success: function(response) {
+                Superbox.hideTagsPreloader();
+                if (response.status) {
+                    var $tr = $(context).closest('tr');
+                    $tr.after(response.html);
+                } else {
+                    TableBuilder.showErrorNotification("Ошибка");
+                }
+            }
+        });
+    }, // end editTagContent
+
+    showTagsPreloader: function()
+    {
+        $('.j-tags-preloader').show();
+    }, // end showTagsPreloader
+
+    hideTagsPreloader: function()
+    {
+        $('.j-tags-preloader').hide();
+    }, // end hideTagsPreloader
+
+    deleteTagImageRelation: function(context, idImage, idTag)
+    {
+        jQuery.SmartMessageBox({
+            title : "Отвязать изображение от тега?",
+            content : "Эту операцию нельзя будет отменить.",
+            buttons : '[Нет][Да]'
+        }, function(ButtonPressed) {
+            if (ButtonPressed === "Да") {
+                Superbox.showTagsPreloader();
+
+                var data = {
+                    query_type: 'image_storage',
+                    storage_type: 'delete_image_from_tag',
+                    id_image: idImage,
+                    id_tag: idTag,
+                    '__node': TableBuilder.getUrlParameter('node')
+                };
+
+                jQuery.ajax({
+                    type: "POST",
+                    url: TableBuilder.getActionUrl(),
+                    data: data,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            $(context).parent().remove();
+
+                            Superbox.hideTagsPreloader();
+
+                            TableBuilder.showSuccessNotification('Изображение отвязано от тега');
+                        } else {
+                            TableBuilder.showErrorNotification('Что-то пошло не так');
+                        }
+                    }
+                });
+            }
+        });
+    }, // end deleteTagImageRelation
+
     deleteImage: function(context, idImage)
     {
         jQuery.SmartMessageBox({
@@ -247,7 +326,7 @@ var Superbox =
                         if (response.status) {
                             $('.superbox .superbox-show', '.b-j-images').remove();
                             $('.superbox .superbox-list.active', '.b-j-images').remove();
-                            
+
                             Superbox.init();
                             TableBuilder.showSuccessNotification('Изображение удалено');
                         } else {
@@ -258,19 +337,19 @@ var Superbox =
             }
         });
     }, // end deleteImage
-    
+
     selectTag: function(context, idTag)
     {
         Superbox.input.val(idTag);
         TableBuilder.closeImageStorageModal();
     }, // end selectTag
-    
+
     selectGallery: function(context, idGallery)
     {
         Superbox.input.val(idGallery);
         TableBuilder.closeImageStorageModal();
     }, // end selectTag
-    
+
     uploadImage: function(context)
     {
         var imgTotal = context.files.length;
@@ -282,22 +361,22 @@ var Superbox =
         var successPercentage = 0;
         var $fog = $('.j-images-smoke').show();
         $fog.find('.j-images-upload-total').text(imgTotal);
-        
+
         var $titleInput = $(context).parent().parent().find('.j-image-title');
-        
+
         var data = new FormData();
         for (var x = 0; x < imgTotal; x++) {
             var data = new FormData();
             data.append("images[]", context.files[x]);
             console.log(context.files[x]);
-            
+
             data.append('query_type', 'image_storage');
             data.append('storage_type', 'upload_image');
             data.append('title', $titleInput.val());
             data.append('__node', TableBuilder.getUrlParameter('node'));
             // FIXME: catalog
             data.append('id_catalog', 1);
-    
+
             jQuery.ajax({
                 data: data,
                 type: "POST",
@@ -307,15 +386,15 @@ var Superbox =
                 processData: false,
                 success: function(response) {
                     imgCount = imgCount + 1;
-                    
+
                     if (response.status) {
                         $titleInput.val('');
                         $('.superbox').prepend(response.html);
                         Superbox.init();
-                        
+
                         imgSuccessCount = imgSuccessCount + 1;
                         successPercentage = successPercentage + percentageMod;
-                        
+
                         $fog.find('.j-images-upload-upload').text(imgCount);
                         $fog.find('.j-images-upload-success').text(imgSuccessCount);
                         $fog.find('.j-images-progress-success').css('width', successPercentage +'%');
@@ -327,7 +406,7 @@ var Superbox =
                         $fog.find('.j-images-upload-fail').text(imgFailCount);
                         //TableBuilder.showErrorNotification("Ошибка при загрузке изображения");
                     }
-                    
+
                     if (imgCount == imgTotal) {
                         $fog.find('.j-images-upload-finish-btn').show();
                     }
@@ -335,7 +414,7 @@ var Superbox =
             });
         }
     }, // end uploadFile
-    
+
     saveImageInfo: function(context, idImage)
     {
         var $context = $(context);
@@ -344,7 +423,7 @@ var Superbox =
         data.push({ name: 'query_type', value: 'image_storage' });
         data.push({ name: 'storage_type', value: 'save_image_info' });
         data.push({ name: '__node', value: TableBuilder.getUrlParameter('node') });
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -360,20 +439,20 @@ var Superbox =
                 }
             }
         });
-        
+
         console.table(data);
     }, // end saveImageInfo
-    
+
     selectImage: function(context, idImage)
     {
         Superbox.input.val(idImage);
         TableBuilder.closeImageStorageModal();
     }, // end selectImage
-    
+
     selectImageForRedactor: function(idImage)
     {
         Superbox.input.val(idImage);
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -383,7 +462,7 @@ var Superbox =
                 console.log(response);
                 if (response.status) {
                     TableBuilder.closeImageStorageModal();
-                    
+
                     Superbox.redactor.image.insert(response.html);
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
@@ -391,56 +470,56 @@ var Superbox =
             }
         });
     }, // end selectImageForRedactor
-    
+
     showGalleries: function(context)
     {
         var $context = $(context);
         if ($context.hasClass('active')) {
             return;
         }
-        
+
         $('.b-j-galleries').show();
         $('.b-j-images').hide();
         $('.b-j-tags').hide();
-        
+
         $context.parent().find('.active').removeClass('active');
         $context.addClass('active');
     }, // end showGalleries
-    
+
     showImages: function(context)
     {
         var $context = $(context);
         if ($context.hasClass('active')) {
             return;
         }
-        
+
         $('.b-j-galleries').hide();
         $('.b-j-images').show();
         $('.b-j-tags').hide();
-        
+
         $context.parent().find('.active').removeClass('active');
         $context.addClass('active');
     }, // end showImages
-    
+
     showTags: function(context)
     {
         var $context = $(context);
         if ($context.hasClass('active')) {
             return;
         }
-        
+
         $('.b-j-galleries').hide();
         $('.b-j-images').hide();
         $('.b-j-tags').show();
-        
+
         $context.parent().find('.active').removeClass('active');
         $context.addClass('active');
     }, // end showTags
-    
+
     addTag: function(context)
     {
         var $input = $(context).parent().parent().find('input');
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -457,7 +536,7 @@ var Superbox =
             }
         });
     }, // end addTag
-    
+
     deleteTag: function(id, context)
     {
         jQuery.SmartMessageBox({
@@ -483,11 +562,11 @@ var Superbox =
             }
         });
     }, // end deleteTag
-    
+
     addGallery: function(context)
     {
         var $input = $(context).parent().parent().find('input');
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -504,7 +583,7 @@ var Superbox =
             }
         });
     }, // end addGallery
-    
+
     deleteGallery: function(id, context)
     {
         jQuery.SmartMessageBox({
@@ -532,19 +611,19 @@ var Superbox =
             }
         });
     }, // end deleteGallery
-    
+
     loadMoreImages: function()
     {
         if (Superbox.is_images_loading) {
             return;
         }
-        
+
         Superbox.is_images_loading = true;
-        var data = { 
-            query_type: 'image_storage', 
-            storage_type: 'load_more_images', 
-            page: Superbox.images_page, 
-            '__node': TableBuilder.getUrlParameter('node') 
+        var data = {
+            query_type: 'image_storage',
+            storage_type: 'load_more_images',
+            page: Superbox.images_page,
+            '__node': TableBuilder.getUrlParameter('node')
         };
         data = $.merge(data, $('#j-images-search-form').serializeArray());
         jQuery.ajax({
@@ -555,10 +634,10 @@ var Superbox =
             success: function(response) {
                 if (response.status) {
                     Superbox.images_page = Superbox.images_page + 1;
-                
+
                     $('.superbox').append(response.html);
                     Superbox.init();
-                    
+
                     Superbox.is_images_loading = false;
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так. Ахахаха!');
@@ -566,7 +645,7 @@ var Superbox =
             }
         });
     }, // end loadMoreImages
-    
+
     deleteImageFromGalleryView: function(idImage)
     {
         jQuery.SmartMessageBox({
@@ -594,7 +673,7 @@ var Superbox =
             }
         });
     }, // end deleteImageFromGalleryView
-    
+
     showImageFormFromGalleryView: function(context)
     {
         $('.j-images-fuck').remove();
@@ -616,14 +695,14 @@ var Superbox =
             }
         });
     }, // end showImageFormFromGalleryView
-    
+
     searchImages: function(context)
     {
         var data = $('#j-images-search-form').serializeArray();
         data.push({ name: 'query_type', value: 'image_storage' });
         data.push({ name: 'storage_type', value: 'search_images' });
         data.push({ name: '__node', value: TableBuilder.getUrlParameter('node') });
-        
+
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -640,7 +719,7 @@ var Superbox =
             }
         });
     }, // end searchImages
-    
+
 };
 
 $(document).ready(function() {

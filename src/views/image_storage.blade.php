@@ -20,7 +20,7 @@
             Superbox.images_page = 1;
             $('.j-images-img-action').trigger('click');
             Superbox.init();
-            
+
             $(document).scroll(function() {
                 if ($(document).scrollTop() + $(window).height() == $(document).height()) {
                     if ($('.j-images-img-action').hasClass('active')) {
@@ -31,4 +31,3 @@
         });
     </script>
 @stop
-

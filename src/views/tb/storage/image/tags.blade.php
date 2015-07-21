@@ -1,4 +1,24 @@
 
+<div class="j-tags-preloader" style="
+    display:none;
+    background-color: #666;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 4;
+    text-align: center;
+    left: 0;
+    top: 0;
+    opacity: 0.5;
+"><i class="fa fa-gear fa-4x fa-spin" style="
+    color: #fff;
+    position: fixed;
+    left: 50%;
+    margin-left: -65px;
+    top: 50%;
+    font-size: 60px;
+"></i></div>
+
 <div class="row">
 
 

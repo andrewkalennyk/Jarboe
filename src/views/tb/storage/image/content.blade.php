@@ -1,10 +1,8 @@
-
 <div class="j-images-storage">
 
 <div class="b-j-catalog-buttons">
     @include('admin::tb.storage.image.action_buttons')
 </div>
-
 
 <div {{ in_array($type, ['image', 'redactor_image']) ? '' : 'style="display: none;"' }} class="b-j-images">
     <?php /*
@@ -35,60 +33,57 @@
 
 </div>
 
-
-
 <style>
-div#ui-datepicker-div {
-    z-index: 999999 !important;
-}
-div.select2-drop {
-    z-index: 8888881;
-}
-div#divSmallBoxes {
-    z-index: 999909;
-}
-img.superbox-current-img {
-    width: 60%;
-}
-div.superbox-imageinfo {
-    width: 40%;
-}
-.j-images-storage .b-j-catalog-buttons {
-    background-color: rgb(241, 240, 255);
-}
-.j-images-storage .b-j-catalog {
-    background-color: aliceblue;
-    text-align: left;
-}
-.j-images-storage .b-j-search {
-    background-color: rgb(251, 251, 251);
-    padding: 0;
-}
-.j-images-storage .b-j-images {
-    text-align: center;
-}
-.j-images-storage .b-j-tags {
+    div#ui-datepicker-div {
+        z-index: 999999 !important;
+    }
+    div.select2-drop {
+        z-index: 8888881;
+    }
+    div#divSmallBoxes {
+        z-index: 999909;
+    }
+    img.superbox-current-img {
+        width: 60%;
+    }
+    div.superbox-imageinfo {
+        width: 40%;
+    }
+    .j-images-storage .b-j-catalog-buttons {
+        background-color: rgb(241, 240, 255);
+    }
+    .j-images-storage .b-j-catalog {
+        background-color: aliceblue;
+        text-align: left;
+    }
+    .j-images-storage .b-j-search {
+        background-color: rgb(251, 251, 251);
+        padding: 0;
+    }
+    .j-images-storage .b-j-images {
+        text-align: center;
+    }
+    .j-images-storage .b-j-tags {
 
-}
-.j-images-storage .b-j-galleries {
+    }
+    .j-images-storage .b-j-galleries {
 
-}
+    }
 </style>
 
-
 <script>
-    Superbox.images_page = 1;
-    Superbox.fields.image = {{ json_encode(\Config::get('jarboe::images.image.fields') ? : array()) }};
-    Superbox.init();
-    $('.image_storage_wrapper').scroll(function() {
-        if ($('.image_storage_wrapper').scrollTop() + $('.image_storage_wrapper').height() == $('#modal_image_storage_wrapper').innerHeight()) {
-            if ($('.j-images-img-action').hasClass('active')) {
-                Superbox.loadMoreImages();
+    $(document).ready(function() {
+        Superbox.images_page = 1;
+        Superbox.fields.image = {{ json_encode(\Config::get('jarboe::images.image.fields') ? : array()) }};
+        Superbox.init();
+        $('.image_storage_wrapper').scroll(function() {
+            if ($('.image_storage_wrapper').scrollTop() + $('.image_storage_wrapper').height() == $('#modal_image_storage_wrapper').innerHeight()) {
+                if ($('.j-images-img-action').hasClass('active')) {
+                    Superbox.loadMoreImages();
+                }
             }
-        }
+        });
+
+        $('.j-datepicker').datepicker();
     });
-    
-    $('.j-datepicker').datepicker();
 </script>
-
-

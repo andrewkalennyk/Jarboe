@@ -64,6 +64,12 @@ class Image
                 
             case 'rename_tag':
                 return $this->doRenameTag();
+
+            case 'show_edit_tags_content':
+                return $this->getTagContentForm();
+
+            case 'delete_image_from_tag':
+                return $this->doDeleteImageTagRelation();
                 
             case 'add_gallery':
                 return $this->doAddGallery();
@@ -272,15 +278,47 @@ class Image
     {
         $model = '\\' . Config::get('jarboe::images.models.tag');
         
-        $gallery = $model::find(Input::get('id'));
-        $gallery->title = Input::get('title');
-        $gallery->save();
+        $tag = $model::find(Input::get('id'));
+        $tag->title = Input::get('title');
+        $tag->save();
         
         return Response::json(array(
             'status' => true,
         ));
     } // end doRenameTag
-    
+
+    private function getTagContentForm()
+    {
+        $model = '\\' . Config::get('jarboe::images.models.tag');
+        $tag = $model::with('images')->where('id', Input::get('id'))->first();
+
+        $html = View::make('admin::tb.storage.image.tag_form', compact('tag'))->render();
+
+        $data = array(
+            'status' => true,
+            'html'   => $html,
+        );
+        return Response::json($data);
+    } // end getTagContentForm
+
+    private function doDeleteImageTagRelation()
+    {
+        DB::table('j_images2tags')
+            ->where('id_image', Input::get('id_image'))
+            ->where('id_tag', Input::get('id_tag'))
+            ->delete();
+
+        $imageModel = Config::get('jarboe::images.models.image');
+        $tagModel = Config::get('jarboe::images.models.tag');
+
+        $imageModel::flushCache();
+        $tagModel::flushCache();
+
+        return Response::json(array(
+            'status' => true
+        ));
+    } // end doDeleteImageTagRelation
+
     private function fetchSelect2($idImage)
     {
         $html = '<fieldset>';

@@ -62,14 +62,50 @@
     <span style="display:inline;margin:0;">
         <form class="smart-form">
         <fieldset>
-            @foreach ($fields as $ident => $info)
-            <section>
-                <label class="label">{{ $info['caption'] }}</label>
-                    <label class="input">
-                        <input class="input-xs" name="{{ $ident }}" value="{{{ $image->get($ident) }}}">
-                    </label>
-            </section>
-            @endforeach
+
+            <?php
+
+            $fieldsResult = array();
+            foreach ($fields as $ident => $info) {
+                $lang = substr($ident, -2);
+                if ($lang == 'ua') {
+                    $fieldsResult['ua'][$ident] = $info;
+                } else if ($lang == 'ru') {
+                    $fieldsResult['ru'][$ident] = $info;
+                } else if ($lang == 'en') {
+                    $fieldsResult['en'][$ident] = $info;
+                } else {
+                    $fieldsResult['other'][$ident] = $info;
+                }
+            }
+
+            ?>
+
+            <ul class="nav nav-tabs bordered">
+                @foreach($fieldsResult as $lang => $field)
+                    <li {{$loop->index1 == 1 ? 'class="active"' : ''}}><a href="#etabform-{{$loop->index1}}" data-toggle="tab">{{$lang}}</a></li>
+                @endforeach
+            </ul>
+
+            <div class="tab-content padding-10" style="background: #fff">
+                @foreach ($fieldsResult as $lang => $field)
+                    <div class="tab-pane {{$loop->index1 == 1 ? 'active' : ''}}" id="etabform-{{$loop->index1}}">
+                        <div class="table-responsive">
+                            <fieldset style="padding:0">
+                                @foreach ($field as $ident => $info)
+                                    <section>
+                                        <label class="label">{{ $info['caption'] }}</label>
+                                        <label class="input">
+                                            <input class="input-xs" name="{{ $ident }}" value="{{{ $image->get($ident) }}}">
+                                        </label>
+                                    </section>
+                                @endforeach
+                            </fieldset>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
         </fieldset>
         
         {{ $select2 }}

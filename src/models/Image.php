@@ -29,6 +29,17 @@ class Image extends AbstractImageStorage
         return $query->whereIn('id', $relatedImagesIds);
     } // end scopeByTags
 
+    public function scopeByGalleries($query, $galleries = array())
+    {
+        if (!$galleries) {
+            return $query;
+        }
+
+        $relatedImagesIds = \DB::table('j_galleries2images')->whereIn('id_gallery', $galleries)->lists('id_image');
+
+        return $query->whereIn('id', $relatedImagesIds);
+    } // end scopeByGalleries
+
     public function getInfo($values = false)
     {
         $info = $values ? : $this->info;
@@ -87,6 +98,8 @@ class Image extends AbstractImageStorage
                     $query->whereBetween($column, array($from, $to));
                 } else if ($column == 'tags') {
                     $query->byTags($value);
+                } else if ($column == 'galleries') {
+                    $query->byGalleries($value);
                 }
 
             } else {

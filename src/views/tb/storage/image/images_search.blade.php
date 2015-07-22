@@ -7,7 +7,8 @@
             <th width="35%">Название</th>
             <th width="10%">Создана (от)</th>
             <th width="10%">Создана (до)</th>
-            <th width="10%">Теги</th>
+            <th width="10%">Связанные теги</th>
+            <th width="10%">Связанные галереи</th>
             <th width="1%"></th>
         </tr>
     </thead>
@@ -43,6 +44,18 @@
                 </div>
             </td>
             <td>
+                <div class="input-group" style="width: 190px;">
+                    <select name="_jsearch[galleries][]" id="images-gallery-search" multiple="multiple" style="width: 190px; display: block;">
+                        <option value=""></option>
+                        @if ($galleries->count())
+                            @foreach($galleries as $gallery)
+                                <option value="{{ $gallery->id }}">{{ $gallery->title }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </td>
+            <td>
                 <a onclick="Superbox.searchImages(this);" href="javascript:void(0);" class="btn btn-default btn-sm">Поиск</a>
             </td>
         </tr>
@@ -54,5 +67,6 @@
 <script>
     jQuery(document).ready(function() {
         jQuery('#images-tag-search').select2();
+        jQuery('#images-gallery-search').select2();
     });
 </script>

@@ -720,6 +720,100 @@ var Superbox =
         });
     }, // end searchImages
 
+    checkSelectedImages: function()
+    {
+        if ($('.superbox-list.selected').length) {
+            $('.b-j-search.operations').show();
+        } else {
+            $('.b-j-search.operations').hide();
+        }
+    }, // end checkSelectedImages
+
+    saveImagesGalleriesRelations: function()
+    {
+        var images = $('.superbox-list.selected img'),
+            imagesIds = [],
+            galleriesIds = $('select[name="_joperations[galleries][]"]').val();
+
+        images.each(function() {
+            imagesIds.push($(this).data('id'));
+        });
+
+        jQuery.ajax({
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            data: {
+                query_type:     'image_storage',
+                storage_type:   'save_images_galleries_relations',
+                __node:         TableBuilder.getUrlParameter('node'),
+                images_ids:     imagesIds,
+                galleries_ids:  galleriesIds
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    $('.superbox-list.selected').removeClass('selected');
+
+                    Superbox.checkSelectedImages();
+                    Superbox.reinitOperationsSelects();
+
+                    TableBuilder.showSuccessNotification('Сохранено');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end saveImagesGalleriesRelations
+
+    saveImagesTagsRelations: function()
+    {
+        var images = $('.superbox-list.selected img'),
+            imagesIds = [],
+            tagsIds = $('select[name="_joperations[tags][]"]').val();
+
+        images.each(function() {
+            imagesIds.push($(this).data('id'));
+        });
+
+        jQuery.ajax({
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            data: {
+                query_type:     'image_storage',
+                storage_type:   'save_images_tags_relations',
+                __node:         TableBuilder.getUrlParameter('node'),
+                images_ids:     imagesIds,
+                tags_ids:       tagsIds
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    $('.superbox-list.selected').removeClass('selected');
+
+                    Superbox.checkSelectedImages();
+                    Superbox.reinitOperationsSelects();
+
+                    TableBuilder.showSuccessNotification('Сохранено');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end saveImagesTagsRelations
+
+    reinitOperationsSelects: function()
+    {
+        var galleriesOperations = jQuery('#galleries-operations'),
+            tagsOperations = jQuery('#tags-operations');
+
+        galleriesOperations.select2('destroy');
+        //galleriesOperations.prop('selectedIndex', 0);
+        galleriesOperations.select2();
+
+        tagsOperations.select2('destroy');
+        //tagsOperations.prop('selectedIndex', 0);
+        tagsOperations.select2();
+    } // end reinitOperationsSelects
 };
 
 $(document).ready(function() {

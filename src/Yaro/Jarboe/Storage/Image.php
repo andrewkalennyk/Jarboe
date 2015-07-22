@@ -52,7 +52,13 @@ class Image
                 
             case 'save_image_info':
                 return $this->doSaveImageInfo();
-                
+
+            case 'save_images_galleries_relations':
+                return $this->doSaveImagesGalleriesRelations();
+
+            case 'save_images_tags_relations':
+                return $this->doSaveImagesTagsRelations();
+
             case 'get_redactor_images_list':
                 return $this->getRedactorImagesList();
                 
@@ -590,7 +596,75 @@ class Image
             'info'   => $image->getInfo($values)
         ));
     } // end doSaveImageInfo
-    
+
+    private function doSaveImagesGalleriesRelations()
+    {
+        $imageModel = '\\' . Config::get('jarboe::images.models.image');
+        $galleryModel = '\\' . Config::get('jarboe::images.models.gallery');
+
+        $imagesIds = Input::get('images_ids', array());
+        $galleriesIds = Input::get('galleries_ids', array());
+
+        foreach ($imagesIds as $idImage) {
+            foreach ($galleriesIds as $idGallery) {
+                // check for relation existance
+                $idExists = DB::table('j_galleries2images')
+                    ->where('id_image', $idImage)
+                    ->where('id_gallery', $idGallery)
+                    ->first();
+
+                // relate entities if relation does not exist
+                if (!$idExists) {
+                    DB::table('j_galleries2images')->insert(
+                        array(
+                            'id_image'      => $idImage,
+                            'id_gallery'    => $idGallery,
+                        )
+                    );
+                }
+            }
+        }
+
+        $imageModel::flushCache();
+        $galleryModel::flushCache();
+
+        return Response::json(array('status' => true));
+    } // end doSaveImagesGalleriesRelations
+
+    private function doSaveImagesTagsRelations()
+    {
+        $imageModel = '\\' . Config::get('jarboe::images.models.image');
+        $tagModel = '\\' . Config::get('jarboe::images.models.tag');
+
+        $imagesIds = Input::get('images_ids', array());
+        $tagsIds = Input::get('tags_ids', array());
+
+        foreach ($imagesIds as $idImage) {
+            foreach ($tagsIds as $idTag) {
+                // check for relation existance
+                $idExists = DB::table('j_images2tags')
+                    ->where('id_image', $idImage)
+                    ->where('id_tag', $idTag)
+                    ->first();
+
+                // relate entities if relation does not exist
+                if (!$idExists) {
+                    DB::table('j_images2tags')->insert(
+                        array(
+                            'id_image'  => $idImage,
+                            'id_tag'    => $idTag,
+                        )
+                    );
+                }
+            }
+        }
+
+        $imageModel::flushCache();
+        $tagModel::flushCache();
+
+        return Response::json(array('status' => true));
+    } // end doSaveImagesTagsRelations
+
     private function onImageTags()
     {
         $idImage = Input::get('id');
@@ -638,7 +712,7 @@ class Image
             DB::table('j_galleries2images')->insert($data);
         }
     } // end onImageGalleries
-    
+
     private function getSanitizedValues($values)
     {
         $sanitized = $values;

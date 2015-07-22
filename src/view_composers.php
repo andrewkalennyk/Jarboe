@@ -35,10 +35,18 @@ View::composer('admin::tb.storage.file.files', function($view) {
     $view->with('files', $files);
 });
 
-View::composer('admin::tb.storage.image.images_search', function($view) {
-    $model  = Config::get('jarboe::images.models.tag');
+View::composer(
+    [
+        'admin::tb.storage.image.images_search',
+        'admin::tb.storage.image.images_operations'
+    ],
+    function($view) {
 
-    $tags = $model::all();
+    $tagModel  = Config::get('jarboe::images.models.tag');
+    $galleryModel = Config::get('jarboe::images.models.gallery');
 
-    $view->with('tags', $tags);
+    $galleries = $galleryModel::orderBy('id', 'desc')->get();
+    $tags = $tagModel::all();
+
+    $view->with('tags', $tags)->with('galleries', $galleries);
 });

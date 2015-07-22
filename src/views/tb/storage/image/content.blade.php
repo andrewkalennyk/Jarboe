@@ -15,6 +15,8 @@
     */ ?>
     
     @include('admin::tb.storage.image.images_search')
+    @include('admin::tb.storage.image.images_operations')
+
     <div id="j-images-container">
         @include('admin::tb.storage.image.images')
     </div>

@@ -16,3 +16,35 @@ a.select2-search-choice-close:before {
     top: 4px;
     right: 4px;
 }
+
+/*fotohranilische*/
+.superbox-img {
+    height: auto !important;
+}
+.b-j-catalog-buttons .btn-group-justified {
+    width: 50% !important;
+}
+.b-j-images .input-group {
+    display: block;
+}
+.b-j-images .input-group .form-control {
+    display: block;
+    width: 100% !important;
+}
+#j-images-sizes-tabs-content .tab-pane {
+    position: relative;
+}
+#j-images-search-form table td {
+    vertical-align: top;
+}
+#j-images-operations-form .btn {
+    width: 100%;
+}
+.superbox-download-image-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+

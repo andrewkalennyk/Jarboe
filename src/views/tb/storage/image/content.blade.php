@@ -28,6 +28,8 @@
     </div>
 </div>
 <div {{ $type == 'gallery' ? '' : 'style="display: none;"' }} class="b-j-galleries">
+    @include('admin::tb.storage.image.galleries_search')
+
     <div class="row well">
         @include('admin::tb.storage.image.galleries')
     </div>

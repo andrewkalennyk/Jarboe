@@ -25,7 +25,10 @@ class Image
                 
             case 'search_images':
                 return $this->getImagesBySearchQuery();
-                
+
+            case 'search_galleries':
+                return $this->getGalleriesBySearchQuery();
+
             case 'show_edit_gallery_content':
                 return $this->getGalleryContentForm();
                 
@@ -79,6 +82,9 @@ class Image
                 
             case 'add_gallery':
                 return $this->doAddGallery();
+
+            case 'add_gallery_with_images':
+                return $this->doAddGalleryWithImages();
                 
             case 'delete_gallery':
                 return $this->doDeleteGallery();
@@ -104,7 +110,18 @@ class Image
             'html'   => $html
         ));
     } // end getImagesBySearchQuery
-    
+
+    private function getGalleriesBySearchQuery()
+    {
+        Session::put('_jsearch_galleries', Input::get('_jsearch_galleries', array()));
+        $html = View::make('admin::tb.storage.image.galleries')->render();
+
+        return Response::json(array(
+            'status' => true,
+            'html'   => $html
+        ));
+    } // end getGalleriesBySearchQuery
+
     private function getFetchedImage()
     {
         $idImage = Input::get('id');
@@ -416,7 +433,38 @@ class Image
             'html'   => View::make('admin::tb.storage.image.gallery_row', compact('gallery', 'type'))->render(),
         ));
     } // end doAddGallery
-    
+
+    private function doAddGalleryWithImages()
+    {
+        $galleryModel = '\\' . Config::get('jarboe::images.models.gallery');
+        $imageModel = '\\' . Config::get('jarboe::images.models.image');
+
+        $type  = Input::get('type');
+
+        $gallery = new $galleryModel();
+        $gallery->title = trim(Input::get('gallery_name'));
+        $gallery->save();
+
+        $imagesIds = Input::get('images_ids', array());
+
+        foreach ($imagesIds as $idImage) {
+            DB::table('j_galleries2images')->insert(
+                array(
+                    'id_image'      => $idImage,
+                    'id_gallery'    => $gallery->id,
+                )
+            );
+        }
+
+        $galleryModel::flushCache();
+        $imageModel::flushCache();
+
+        return Response::json(array(
+            'status' => true,
+            'html'   => View::make('admin::tb.storage.image.gallery_row', compact('gallery', 'type'))->render(),
+        ));
+    } // end doAddGallery
+
     private function doDeleteTag()
     {
         $model = '\\' . Config::get('jarboe::images.models.tag');

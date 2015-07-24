@@ -40,6 +40,15 @@ class Image extends AbstractImageStorage
         return $query->whereIn('id', $relatedImagesIds);
     } // end scopeByGalleries
 
+    public function scopeByTitle($query, $title)
+    {
+        if (!$title) {
+            return $query;
+        }
+
+        return $query->where('info', 'like', '%'. $title .'%');
+    } // end scopeByTitle
+
     public function getInfo($values = false)
     {
         $info = $values ? : $this->info;
@@ -103,11 +112,15 @@ class Image extends AbstractImageStorage
                 }
 
             } else {
-                $query->where($column, 'like', '%'. $value .'%');
+                if ($column == 'title') {
+                    $query->byTitle($value);
+                } else {
+                    $query->where($column, 'like', '%'. $value .'%');
+                }
             }
         }
 
-        \Session::forget('_jsearch_images');
+        //\Session::forget('_jsearch_images');
 
         return $query;
     } // end scopeSearch

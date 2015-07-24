@@ -11,7 +11,18 @@
 			<tr>
 				<td>
 					<div class="col-md-12">
-						<div class="col-md-2">Связать с галереями</div>
+						<div class="col-md-2">Создать новую галерею</div>
+						<div class="col-md-9">
+							<div class="input-group">
+								<input type="text" name="_joperations[gallery_name]" class="form-control" style="min-width: 500px;" placeholder="Название галереи">
+							</div>
+						</div>
+						<div class="col-md-1">
+							<a onclick="Superbox.addGalleryWithImages(this);" href="javascript:void(0);" class="btn btn-default btn-sm">Создать</a>
+						</div>
+					</div>
+					<div class="col-md-12" style="margin-top: 10px;">
+						<div class="col-md-2">Добавить в галереи</div>
 						<div class="col-md-9">
 							<div class="input-group">
 								<select name="_joperations[galleries][]" id="galleries-operations" multiple="multiple" style="min-width: 500px; display: block; width: 100%;">
@@ -28,8 +39,8 @@
 							<a onclick="Superbox.saveImagesGalleriesRelations();" href="javascript:void(0);" class="btn btn-default btn-sm">Сохранить</a>
 						</div>
 					</div>
-					<div class="col-md-12" style="margin-top: 20px;">
-						<div class="col-md-2">Связать с тегами</div>
+					<div class="col-md-12" style="margin-top: 10px;">
+						<div class="col-md-2">Добавить к тегам</div>
 						<div class="col-md-9">
 							<div class="input-group">
 								<select name="_joperations[tags][]" id="tags-operations" multiple="multiple" style="min-width: 500px; display: block; width: 100%;">

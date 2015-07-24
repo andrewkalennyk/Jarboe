@@ -9,8 +9,11 @@ View::composer('admin::tb.storage.image.tags', function($view) {
 
 View::composer('admin::tb.storage.image.galleries', function($view) {
     $model = Config::get('jarboe::images.models.gallery');
-    $galleries = $model::orderBy('id', 'desc')->get();
-    $view->with('galleries', $galleries);
+    $galleries = $model::search()
+                    ->orderBy('id', 'desc')
+                    ->get();
+    
+    $view->with('galleries', $galleries)->with('type', 'gallery');
 });
 
 View::composer('admin::tb.storage.image.images', function($view) {

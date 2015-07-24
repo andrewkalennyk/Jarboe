@@ -28,10 +28,7 @@
             <th width="1%">#</th>
             <th style="text-align: right;"><input style="width:30%;" type="text" name="title" /></th>
             <th width="1%">
-                <a href="javascript:void(0);" class="btn btn-default btn-sm" 
-                   onclick="Superbox.addGallery(this);">
-                    Добавить
-                </a>
+                <a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="Superbox.addGallery(this);">Добавить</a>
             </th>
             @if ($type == 'gallery')
             <th></th>

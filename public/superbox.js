@@ -570,7 +570,13 @@ var Superbox =
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
-            data: { query_type: 'image_storage', storage_type: 'add_gallery', type: Superbox.type_select, title: $input.val(), '__node': TableBuilder.getUrlParameter('node') },
+            data: {
+                query_type: 'image_storage',
+                storage_type: 'add_gallery',
+                type: Superbox.type_select,
+                title: $input.val(),
+                '__node': TableBuilder.getUrlParameter('node')
+            },
             dataType: 'json',
             success: function(response) {
                 console.log(response);
@@ -583,6 +589,46 @@ var Superbox =
             }
         });
     }, // end addGallery
+
+    addGalleryWithImages: function(context)
+    {
+        var images = $('.superbox-list.selected img'),
+            imagesIds = [],
+            galleryName = $('input[name="_joperations[gallery_name]"]').val().trim();
+
+        if (!galleryName) {
+            TableBuilder.showErrorNotification('Введите название галереи для создания');
+            return false;
+        }
+
+        images.each(function() {
+            imagesIds.push($(this).data('id'));
+        });
+
+        jQuery.ajax({
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            data: {
+                query_type:     'image_storage',
+                storage_type:   'add_gallery_with_images',
+                type:           Superbox.type_select,
+                __node:         TableBuilder.getUrlParameter('node'),
+                images_ids:     imagesIds,
+                gallery_name:   galleryName
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    $('tbody', '.j-galleries-table').prepend(response.html);
+                    $('input[name="_joperations[gallery_name]"]').val('');
+
+                    TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end addGalleryWithImages
 
     deleteGallery: function(id, context)
     {
@@ -720,6 +766,28 @@ var Superbox =
         });
     }, // end searchImages
 
+    searchGalleries: function(context)
+    {
+        var data = $('#j-galleries-search-form').serializeArray();
+        data.push({ name: 'query_type', value: 'image_storage' });
+        data.push({ name: 'storage_type', value: 'search_galleries' });
+        data.push({ name: '__node', value: TableBuilder.getUrlParameter('node') });
+
+        jQuery.ajax({
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    $('.b-j-galleries .row').html(response.html);
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end searchGalleries
+
     checkSelectedImages: function()
     {
         if ($('.superbox-list.selected').length) {
@@ -734,6 +802,11 @@ var Superbox =
         var images = $('.superbox-list.selected img'),
             imagesIds = [],
             galleriesIds = $('select[name="_joperations[galleries][]"]').val();
+
+        if (!galleriesIds) {
+            TableBuilder.showErrorNotification('Выберите галереи для добавления изображений');
+            return false;
+        }
 
         images.each(function() {
             imagesIds.push($(this).data('id'));
@@ -770,6 +843,11 @@ var Superbox =
         var images = $('.superbox-list.selected img'),
             imagesIds = [],
             tagsIds = $('select[name="_joperations[tags][]"]').val();
+
+        if (!tagsIds) {
+            TableBuilder.showErrorNotification('Выберите теги для добавления изображений');
+            return false;
+        }
 
         images.each(function() {
             imagesIds.push($(this).data('id'));

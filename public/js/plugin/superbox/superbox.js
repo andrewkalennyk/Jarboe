@@ -27,7 +27,7 @@
             $('.superbox-list').click(function(e) {
 
                 // check items for editing
-                if (e.ctrlKey) {
+                if (e.ctrlKey || e.shiftKey) {
 
                     if ($(this).hasClass('selected')) {
                         $(this).removeClass('selected');

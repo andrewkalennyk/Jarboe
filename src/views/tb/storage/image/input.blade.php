@@ -21,11 +21,15 @@
 
         @elseif ($entity->isGallery())
 
-            <?php $images = $entity->images()->get(); ?>
+            <?php $images = $entity->images()->priority()->get(); ?>
 
             @if ($images)
                 @foreach($images as $image)
-                        <img style="height: 90px;" src="{{ asset(cropp($image->getSource())->fit(90)) }}">
+                    @if ($loop->index == 8)
+                        @break
+                    @endif
+
+                    <img style="height: 90px;" src="{{ asset(cropp($image->getSource())->fit(90)) }}">
                 @endforeach
             @else
                 {{ $entity->title }} | {{ $entity->created_at }}

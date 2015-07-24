@@ -1,4 +1,3 @@
-
 <div style="overflow: hidden;">
     <div style="float:left; width: 90%;">
         <input type="text" readonly="readonly"
@@ -17,12 +16,25 @@
     
     @if ($row && $entity)
         @if ($entity->isImage() && $entity->getSource())
+
             <img style="height: 90px;" src="{{ asset(cropp($entity->getSource())->fit(90)) }}">
+
         @elseif ($entity->isGallery())
-            {{ $entity->title }} | {{ $entity->created_at }}
+
+            <?php $images = $entity->images()->get(); ?>
+
+            @if ($images)
+                @foreach($images as $image)
+                        <img style="height: 90px;" src="{{ asset(cropp($image->getSource())->fit(90)) }}">
+                @endforeach
+            @else
+                {{ $entity->title }} | {{ $entity->created_at }}
+            @endif
+
         @elseif($entity->isTag())
+
             {{ $entity->title }} | {{ $entity->created_at }}
+
         @endif
     @endif
 </div>
-

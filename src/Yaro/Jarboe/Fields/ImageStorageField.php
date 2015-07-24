@@ -21,12 +21,23 @@ class ImageStorageField extends AbstractField
         
         $type = $this->getRequiredAttribute('storage_type');
         $model = '\\' . \Config::get('jarboe::images.models.'. $type);
-        $entity = $model::find($this->getValue($row));
+
+        if ($type == 'gallery') {
+            $entity = $model::with('images')->find($this->getValue($row));
+        } else {
+            $entity = $model::find($this->getValue($row));
+        }
+
         if ($entity) {
             if ($entity->isImage() && $entity->getSource()) {
                 $html = '<img style="height: 90px;" src="'. asset(cropp($entity->getSource())->fit(90)) .'">';
             } elseif ($entity->isGallery()) {
-                $html = $entity->title .' | '. $entity->created_at;
+                if ($entity->images->count()) {
+                    $html = '<img style="height: 90px;" src="'. asset(cropp($entity->images[0]->getSource())->fit(90)) .'">';
+                } else {
+                    $html = $entity->title .' | '. $entity->created_at;
+                }
+
             } elseif ($entity->isTag()) {
                 $html = $entity->title .' | '. $entity->created_at;
             }

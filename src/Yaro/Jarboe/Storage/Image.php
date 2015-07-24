@@ -328,8 +328,8 @@ class Image
     private function fetchSelect2($idImage)
     {
         $html = '<fieldset>';
-        $html .= $this->fetchTagsSelect($idImage);
         $html .= $this->fetchGalleriesSelect($idImage);
+        $html .= $this->fetchTagsSelect($idImage);
         $html .= '</fieldset>';
         
         return $html;

@@ -1666,6 +1666,10 @@ console.log(num);
             }
         });
     }, // end sendInlineEditForm
-    
-};
 
+    clearStorageImage: function(context)
+    {
+        $(context).parent().prev().children().first().val('');
+        $(context).parent().next().next().children().remove();
+    } // end clearStorageImage
+};

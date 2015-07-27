@@ -1,5 +1,5 @@
 <div style="overflow: hidden;">
-    <div style="float:left; width: 90%;">
+    <div style="float:left; width: 80%;">
         <input type="text" readonly="readonly"
                id="{{$name}}"
                value="{{{ $value }}}" 
@@ -9,36 +9,42 @@
                class="dblclick-edit-input form-control input-sm unselectable">
         </input>
     </div>
-    
-    <div style="float:right;width: 9%;">
-        <a onclick="TableBuilder.openImageStorageModal(this, '{{$type}}');" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Открыть</a>
+
+    <div style="float:right;width: 9%;margin-left: 1%;">
+        <a onclick="TableBuilder.clearStorageImage(this);" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Удалить</a>
     </div>
-    
-    @if ($row && $entity)
-        @if ($entity->isImage() && $entity->getSource())
 
-            <img style="height: 90px;" src="{{ asset(cropp($entity->getSource())->fit(90)) }}">
+    <div style="float:right;width: 9%;">
+        <a onclick="TableBuilder.openImageStorageModal(this, '{{$type}}');" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Выбрать</a>
+    </div>
 
-        @elseif ($entity->isGallery())
+    <div>
+        @if ($row && $entity)
+            @if ($entity->isImage() && $entity->getSource())
 
-            <?php $images = $entity->images()->priority()->get(); ?>
+                <img style="height: 90px;" src="{{ asset(cropp($entity->getSource())->fit(90)) }}">
 
-            @if ($images)
-                @foreach($images as $image)
-                    @if ($loop->index == 8)
-                        @break
-                    @endif
+            @elseif ($entity->isGallery())
 
-                    <img style="height: 90px;" src="{{ asset(cropp($image->getSource())->fit(90)) }}">
-                @endforeach
-            @else
+                <?php $images = $entity->images()->priority()->get(); ?>
+
+                @if ($images)
+                    @foreach($images as $image)
+                        @if ($loop->index == 5)
+                            @break
+                        @endif
+
+                        <img style="height: 90px;" src="{{ asset(cropp($image->getSource())->fit(90)) }}">
+                    @endforeach
+                @else
+                    {{ $entity->title }} | {{ $entity->created_at }}
+                @endif
+
+            @elseif($entity->isTag())
+
                 {{ $entity->title }} | {{ $entity->created_at }}
+
             @endif
-
-        @elseif($entity->isTag())
-
-            {{ $entity->title }} | {{ $entity->created_at }}
-
         @endif
-    @endif
+    </div>
 </div>

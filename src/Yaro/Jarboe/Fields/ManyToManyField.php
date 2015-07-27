@@ -200,8 +200,12 @@ class ManyToManyField extends AbstractField
         
         $additionalWheres = $this->getAttribute('additional_where');
         if ($additionalWheres) {
-            foreach ($additionalWheres as $key => $opt) {
-                $options->where($key, $opt['sign'], $opt['value']);
+            if (is_callable($additionalWheres)) {
+                $additionalWheres($options);
+            } else {
+                foreach ($additionalWheres as $key => $opt) {
+                    $options->where($key, $opt['sign'], $opt['value']);
+                }
             }
         }
 
@@ -239,8 +243,12 @@ class ManyToManyField extends AbstractField
         
         $additionalWheres = $this->getAttribute('additional_where');
         if ($additionalWheres) {
-            foreach ($additionalWheres as $key => $opt) {
-                $options->where($key, $opt['sign'], $opt['value']);
+            if (is_callable($additionalWheres)) {
+                $additionalWheres($options);
+            } else {
+                foreach ($additionalWheres as $key => $opt) {
+                    $options->where($key, $opt['sign'], $opt['value']);
+                }
             }
         }
         

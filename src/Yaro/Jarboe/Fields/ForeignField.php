@@ -164,11 +164,17 @@ class ForeignField extends AbstractField
                      
                      
         $additionalWheres = $this->getAttribute('additional_where');
+
         if ($additionalWheres) {
-            foreach ($additionalWheres as $key => $opt) {
-                $db->where($key, $opt['sign'], $opt['value']);
+            if (is_callable($additionalWheres)) {
+                $additionalWheres($db);
+            } else {
+                foreach ($additionalWheres as $key => $opt) {
+                    $db->where($key, $opt['sign'], $opt['value']);
+                }
             }
         }
+
         $res = $db->get();
 
         $options = array();

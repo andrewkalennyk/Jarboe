@@ -14,8 +14,9 @@
         <a onclick="TableBuilder.clearStorageImage(this);" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Удалить</a>
     </div>
 
+    {{-- fixme: $type = 'image' --}}
     <div style="float:right;width: 9%;">
-        <a onclick="TableBuilder.openImageStorageModal(this, '{{$type}}');" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Выбрать</a>
+        <a onclick="TableBuilder.openImageStorageModal(this, 'image');" style="width:100%;" class="btn btn-info btn-sm" href="javascript:void(0);">Выбрать</a>
     </div>
 
     <div>

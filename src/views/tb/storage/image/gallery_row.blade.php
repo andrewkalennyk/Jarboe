@@ -17,7 +17,7 @@
 
     @if ($type == 'gallery')
         <td width="1%">
-            <a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="Superbox.selectGallery(this, {{ $gallery->id }});">Выбрать</a>
+            <a href="javascript:void(0);" class="btn btn-default btn-sm select-gallery" onclick="Superbox.selectGallery(this, {{ $gallery->id }});">Выбрать</a>
         </td>
     @endif
 

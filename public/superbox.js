@@ -623,6 +623,12 @@ var Superbox =
                     $('input[name="_joperations[gallery_name]"]').val('');
 
                     TableBuilder.showSuccessNotification('Галерея с изображениями успешно создана');
+
+                    setTimeout(function() {
+                        $('.j-images-storage .b-j-catalog-buttons .btn-group-justified a').first().click();
+                        $('.j-galleries-table tbody tr').first().find('a.select-gallery').first().click();
+                    }, 1000);
+
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }

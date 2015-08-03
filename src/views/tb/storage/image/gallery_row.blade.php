@@ -19,6 +19,12 @@
         <td width="1%">
             <a href="javascript:void(0);" class="btn btn-default btn-sm select-gallery" onclick="Superbox.selectGallery(this, {{ $gallery->id }});">Выбрать</a>
         </td>
+
+    {{-- fixme: delete in future --}}
+    @elseif ($type == 'image' && isset($gallery->id))
+        <td width="1%">
+            <a href="javascript:void(0);" class="btn btn-default btn-sm select-gallery" onclick="Superbox.selectGallery(this, {{ $gallery->id }});">Выбрать</a>
+        </td>
     @endif
 
     <td width="1%">

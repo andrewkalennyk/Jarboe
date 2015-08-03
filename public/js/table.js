@@ -9,7 +9,7 @@ var Table =
     form: '#modal_form',
     form_edit: '#modal_form_edit',
     form_label: '#modal_form_edit_label',
-    form_wrapper: '#modal_wrapper',
+    form_wrapper: '#modal_wrapper_container',
     create_form: '#create_form',
     edit_form: '#edit_form',
     filter: '#filters-row :input',

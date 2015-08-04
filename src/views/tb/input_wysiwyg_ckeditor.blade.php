@@ -27,5 +27,6 @@
         ?>
 
         CKEDITOR.config.removeButtons = '{{$editorButtons}}';
+        CKEDITOR.config.extraPlugins = "ImageManager";
     });
 </script>

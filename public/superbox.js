@@ -456,14 +456,44 @@ var Superbox =
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
-            data: { query_type: 'image_storage', storage_type: 'fetch_image_by_id', id: idImage, '__node': TableBuilder.getUrlParameter('node') },
+            data: {
+                query_type:     'image_storage',
+                storage_type:   'fetch_image_by_id',
+                id:             idImage,
+                '__node':       TableBuilder.getUrlParameter('node')
+            },
             dataType: 'json',
             success: function(response) {
-                console.log(response);
                 if (response.status) {
                     TableBuilder.closeImageStorageModal();
 
                     Superbox.redactor.image.insert(response.html);
+                } else {
+                    TableBuilder.showErrorNotification('Что-то пошло не так');
+                }
+            }
+        });
+    }, // end selectImageForRedactor
+
+    selectImageForCKEditor: function(idImage)
+    {
+        Superbox.input.val(idImage);
+
+        jQuery.ajax({
+            type: "POST",
+            url: TableBuilder.getActionUrl(),
+            data: {
+                query_type:     'image_storage',
+                storage_type:   'fetch_image_by_id',
+                id:             idImage,
+                '__node':       TableBuilder.getUrlParameter('node')
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status) {
+                    TableBuilder.closeImageStorageModal();
+
+                    Superbox.redactor.insertHtml(response.html);
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
                 }

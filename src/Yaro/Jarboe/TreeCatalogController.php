@@ -170,7 +170,7 @@ class TreeCatalogController
     public function process()
     {
         $model = $this->model;
-        
+
         $idNode  = Input::get('__node', Input::get('node', 1));
         $current = $model::find($idNode);
 

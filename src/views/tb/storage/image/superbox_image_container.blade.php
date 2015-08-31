@@ -2,7 +2,7 @@
 @if (!$sizes)
 
 <img src="{{ asset($image->getSource()) }}" class="superbox-current-img">
-<a download="{{ $image->title }}" target="_blank" href="{{ asset($image->getSource()) }}" class="j-btn-download superbox-download-image-link btn btn-default btn-sm">скачать</a>
+<a download="{{ $image->title }}" target="_blank" href="{{ asset($image->getSource()) }}" class="j-btn-download btn btn-default btn-sm" style="position: absolute; top: 30px; left: 30px;">скачать</a>
 
 @else
 <ul id="j-images-sizes-tabs" class="nav nav-tabs bordered" style="width: 58%;">
@@ -21,7 +21,7 @@
     <div class="tab-pane fade in active" id="j-images-size-original">
     <p>
         <img src="{{ asset($image->getSource()) }}" class="superbox-current-img" style="width: auto;display: block;margin: 0 auto;float: none;">
-        <a download="{{ $image->title }}" target="_blank" href="{{ asset($image->getSource()) }}" class="j-btn-download btn btn-default btn-sm superbox-download-image-link">скачать</a>
+        <a download="{{ $image->title }}" target="_blank" href="{{ asset($image->getSource()) }}" class="j-btn-download btn btn-default btn-sm" style="position: absolute; top: 78px; left: 40px;">скачать</a>
     </p>
         <form class="smart-form pull-left">
         <div class="input input-file" style="width: 350px;">
@@ -38,7 +38,7 @@
         <div class="tab-pane fade" id="j-images-size-{{ $ident }}">
         <p>
             <img src="{{ asset($image->getSource($ident)) }}" class="superbox-current-img" style="width: auto;display: block;margin: 0 auto; float: none;">
-            <a download="{{ $image->title .'('. $info['caption'] .')' }}" target="_blank" href="{{ asset($image->getSource($ident)) }}" class="j-btn-download btn btn-default btn-sm superbox-download-image-link">скачать</a>
+            <a download="{{ $image->title .'('. $info['caption'] .')' }}" target="_blank" href="{{ asset($image->getSource($ident)) }}" class="j-btn-download btn btn-default btn-sm" style="position: absolute; top: 78px; left: 40px;">скачать</a>
         </p>
             <form class="smart-form pull-left">
             <div class="input input-file" style="width: 350px;">
@@ -126,7 +126,13 @@
                       class="j-image-storage-select-image-btn btn btn-primary btn-sm pull-right j-btn-save" 
                       style="margin-right: 6px;">Выбрать</a> 
             @endif
-            
+
+            @if ($type == 'ckeditor_image')
+                <a onclick="Superbox.selectImageForCKEditor({{ $image->id }});" href="javascript:void(0);"
+                   class="j-image-storage-select-image-btn btn btn-primary btn-sm pull-right j-btn-save"
+                   style="margin-right: 6px;">Выбрать</a>
+            @endif
+
             @if ($type == 'image_from_gallery') 
             <a onclick="Superbox.deleteImageFromGalleryView({{ $image->id }});" href="javascript:void(0);" 
                       class="btn btn-danger btn-sm pull-left j-btn-del">Удалить</a>

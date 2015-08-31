@@ -94,7 +94,7 @@
         }
         </style>
         
-        <div id="modal_wrapper"></div>
+        <div id="modal_wrapper_container"></div>
         @yield('table_form')
         
         <div class="image_storage_wrapper" style="display:none;">

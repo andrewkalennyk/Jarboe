@@ -4,7 +4,7 @@
     @include('admin::tb.storage.image.action_buttons')
 </div>
 
-<div {{ in_array($type, ['image', 'redactor_image']) ? '' : 'style="display: none;"' }} class="b-j-images">
+<div {{ in_array($type, ['image', 'redactor_image', 'ckeditor_image']) ? '' : 'style="display: none;"' }} class="b-j-images">
     <?php /*
     <div class="b-j-catalog well">
         @for ($i = 0; $i < 12; $i++)

@@ -60,6 +60,9 @@ class CheckboxField extends AbstractField
 
         $table = View::make('admin::tb.input_checkbox');
         $table->value = $this->getValue($row);
+        if (!$row && $this->getAttribute('default')) {
+            $table->value = 1;
+        }
         $table->name  = $this->getFieldName();
         $table->caption = $this->getAttribute('caption');
 

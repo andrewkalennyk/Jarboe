@@ -199,11 +199,18 @@ if (Config::get('jarboe::tree.is_active')) {
         });
 
 
-        foreach($_tbTree as $node) {
-          $returnNodes[$node->getUrl()] = $node;
+        foreach ($_tbTree as $node) {
+            if (!LaravelLocalization::setLocale()) {
+                $returnNodes['/'. $node->getUrl()] = $node;
+            } else {
+                $url = '/'. LaravelLocalization::setLocale() .'/'. $node->getUrl();
+                $url = str_replace("//", "", $url);
+
+                $returnNodes[$url] = $node;
+            }
         }
 
-        $thisUrlPathFull = Request::path();
+        $thisUrlPathFull = '/'. Request::path();
 
         $templates = Config::get('jarboe::tree.templates');
 
@@ -226,7 +233,7 @@ if (Config::get('jarboe::tree.is_active')) {
 
                     $app = app();
                     $controller = $app->make($controller);
-
+      
                     return $controller->callAction('init', array($node, $method));
                 });
             });

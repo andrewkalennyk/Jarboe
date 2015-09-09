@@ -89,6 +89,16 @@ class Tree extends \Baum\Node
         return false;
     } // end isActive
 
+    //return url without location
+    public function getUrlNoLocation(){
+
+        if (!$this->_nodeUrl) {
+            $this->_nodeUrl = $this->getGeneratedUrl();
+        }
+        return "/".$this->_nodeUrl;
+    }
+
+
     public function getGeneratedUrl()
     {
         $all = $this->getAncestorsAndSelf();

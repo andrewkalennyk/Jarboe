@@ -176,74 +176,65 @@ function recurseMyTree($tree, $node, &$slugs = array()) {
 // tree is active
 if (Config::get('jarboe::tree.is_active')) {
     try {
-        $_tbTree = Cache::tags(array('jarboe', 'j_tree'))->rememberForever('j_tree', function() {
-            $_model = Config::get('jarboe::tree.model');
+        $_model = Config::get('jarboe::tree.model');
 
-            if (!class_exists($_model)) {
-                return "";
-            }
-
-            $_tbTree  = $_model::all();
-            $_clone   = $_tbTree->toArray();
-
-            foreach ($_clone as $cl) {
-                $_clone[$cl['id']] = $cl;
-            }
-
-            foreach ($_tbTree as $node) {
-                $_nodeUrl = recurseMyTree($_clone, $node);
-                $node->setUrl($_nodeUrl);
-            }
-
-            return $_tbTree;
-        });
-
-
-        foreach ($_tbTree as $node) {
-            if (!LaravelLocalization::setLocale()) {
-                $returnNodes['/'. $node->getUrl()] = $node;
-            } else {
-                $url = '/'. LaravelLocalization::setLocale() .'/'. $node->getUrl();
-                $url = str_replace("//", "", $url);
-
-                $returnNodes[$url] = $node;
-            }
-        }
-
-        $thisUrlPathFull = '/'. Request::path();
-
+        $arrSegments = explode("/", Request::path());
+        $slug = end($arrSegments);
         $templates = Config::get('jarboe::tree.templates');
 
-        if (isset($returnNodes[$thisUrlPathFull])) {
-            $node = $returnNodes[$thisUrlPathFull];
+        if (!$slug || $slug == LaravelLocalization::setLocale()) {
+            $slug = "/";
         }
 
-        if (isset($node)) {
-            $_nodeUrl = $node->getUrlNoLocation();
+        // echo $slug;
 
-            Route::group(array('prefix' => LaravelLocalization::setLocale()), function() use ($node, $_nodeUrl, $templates)
-            {
-                Route::get($_nodeUrl, function() use ($node, $templates)
+        $nodes = $_model::where("slug", 'like', $slug)->get();
+
+
+        foreach($nodes as $node) {
+
+            if (isset($node->id)) {
+
+                $_nodeUrl = $node->getUrlNoLocation();
+
+                Route::group(array('prefix' => LaravelLocalization::setLocale()), function() use ($node, $_nodeUrl, $templates)
                 {
-                    if (!isset($templates[$node->template])) {
-                        App::abort(404);
-                    }
 
-                    list($controller, $method) = explode('@', $templates[$node->template]['action']);
+                    Route::get($_nodeUrl, function() use ($node, $templates)
+                    {
 
-                    $app = app();
-                    $controller = $app->make($controller);
-      
-                    return $controller->callAction('init', array($node, $method));
+                        if (!isset($templates[$node->template])) {
+                            App::abort(404);
+                        }
+
+                        list($controller, $method) = explode('@', $templates[$node->template]['action']);
+
+                        $app = app();
+                        $controller = $app->make($controller);
+
+                        return $controller->callAction('init', array($node, $method));
+                    });
                 });
-            });
 
-        } else {
-            App::abort(404);
+                if (LaravelLocalization::setLocale() == "") {
+                    $pathUrl= "/".Request::path();
+                } else {
+                    $pathUrl = Request::path();
+                }
+
+                if ($pathUrl == LaravelLocalization::setLocale().$_nodeUrl) {
+                    Session::put('currentNode', $node);
+                }  else {
+                    Session::put('currentNode', $node);
+                }
+
+
+            }
+
         }
 
     } catch (Exception $e) {
-     
+
     }
 
 }

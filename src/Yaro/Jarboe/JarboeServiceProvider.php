@@ -51,7 +51,7 @@ class JarboeServiceProvider extends ServiceProvider {
 
     private function doCommandsRegister()
     {
-        $this->app['command.jarboe.prepare'] = $this->app->share(
+        /*$this->app['command.jarboe.prepare'] = $this->app->share(
             function ($app) {
                 return new PrepareArtisanCommand();
             }
@@ -78,7 +78,7 @@ class JarboeServiceProvider extends ServiceProvider {
             'command.jarboe.create_admin_user',
             'command.jarboe.create_superuser',
             'command.jarboe.create_definition',
-        ));
+        ));*/
     } // end doCommandsRegister
 
     /**
@@ -88,10 +88,10 @@ class JarboeServiceProvider extends ServiceProvider {
      */
     public function provides()
     {
-        return array(
+       /* return array(
             'command.jarboe.prepare',
             'command.jarboe.create_admin_user'
-        );
+        );*/
     }
 
 }

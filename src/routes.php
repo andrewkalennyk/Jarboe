@@ -197,7 +197,10 @@ if (Config::get('jarboe::tree.is_active')) {
 
                 $_nodeUrl = $node->getUrlNoLocation();
 
-                Route::group(array('prefix' => LaravelLocalization::setLocale()), function() use ($node, $_nodeUrl, $templates)
+                // todo: test
+                Route::group(array('prefix' => LaravelLocalization::setLocale(),
+                     'before' => 'cache', 'after' => 'cache'
+                ) , function() use ($node, $_nodeUrl, $templates)
                 {
 
                     Route::get($_nodeUrl, function() use ($node, $templates)

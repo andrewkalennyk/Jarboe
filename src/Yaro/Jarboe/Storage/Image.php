@@ -129,13 +129,13 @@ class Image
         $wysiwygType = Config::get('jarboe::images.wysiwyg_image_type', '');
         
         $image = $model::find($idImage);
-        $html = '<img class="j-image" src="'. $image->$wysiwygType .'" data-src="'. $image->getSource() .'"';
+        $html = '<img class="j-image" src="'. $image->$wysiwygType .'" data-src="'. $image->getSource() .'" id="'. $idImage .'"';
         $info = json_decode($image->info, true) ? : array();
         foreach ($info as $key => $val) {
             $html .= ' data-'. $key . '="'. e($val) .'"'; 
         }
         $html .= '>';
-        
+
         return Response::json(array(
             'status' => true,
             'html'   => $html

@@ -60,6 +60,8 @@ Route::get('/login', 'Yaro\Jarboe\TBController@showLogin');
 Route::post('/login', 'Yaro\Jarboe\TBController@postLogin');
 
 
+/*
+
 
 //
 function recurse_my_tree($tree, $node, &$slugs = array()) {
@@ -148,13 +150,98 @@ if (\Config::get('jarboe::tree.is_active')) {
     unset($_model);
 }
 
+*/
+
+/**
+ *  recurse create url for tree
+ *  @return string
+ */
+function recurseMyTree($tree, $node, &$slugs = array()) {
+    if (!$node['parent_id']) {
+        return $node['slug'];
+    }
+
+    $slugs[] = $node['slug'];
+    $idParent = $node['parent_id'];
+    if ($idParent) {
+        $parent = $tree[$idParent];
+        recurseMyTree($tree, $parent, $slugs);
+    }
+
+    return implode('/', array_reverse($slugs));
+}
 
 
 
+// tree is active
+if (Config::get('jarboe::tree.is_active')) {
+    try {
+        $_model = Config::get('jarboe::tree.model');
 
+        $arrSegments = explode("/", Request::path());
+        $slug = end($arrSegments);
+        $templates = Config::get('jarboe::tree.templates');
+
+        if (!$slug || $slug == LaravelLocalization::setLocale()) {
+            $slug = "/";
+        }
+
+        // echo $slug;
+
+        $nodes = $_model::where("slug", 'like', $slug)->get();
+
+
+        foreach($nodes as $node) {
+
+            if (isset($node->id)) {
+
+                $_nodeUrl = $node->getUrlNoLocation();
+
+                // todo: test
+                Route::group(array('prefix' => LaravelLocalization::setLocale(),
+                    'after' => 'cash'
+                ) , function() use ($node, $_nodeUrl, $templates)
+                {
+
+                    Route::get($_nodeUrl, function() use ($node, $templates)
+                    {
+
+                        if (!isset($templates[$node->template])) {
+                            App::abort(404);
+                        }
+
+                        list($controller, $method) = explode('@', $templates[$node->template]['action']);
+
+                        $app = app();
+                        $controller = $app->make($controller);
+
+                        return $controller->callAction('init', array($node, $method));
+                    });
+                });
+
+                if (LaravelLocalization::setLocale() == "") {
+                    $pathUrl= "/".Request::path();
+                } else {
+                    $pathUrl = Request::path();
+                }
+
+                if ($pathUrl == LaravelLocalization::setLocale().$_nodeUrl) {
+                    Session::put('currentNode', $node);
+                }  else {
+                    Session::put('currentNode', $node);
+                }
+
+
+            }
+
+        }
+
+    } catch (Exception $e) {
+
+    }
+
+}
 
 // devel fallback
 Route::get('/thereisnospoon', 'Yaro\Jarboe\DevelController@showMain');
 Route::post('/thereisnospoon', 'Yaro\Jarboe\DevelController@handleMain');
-
-

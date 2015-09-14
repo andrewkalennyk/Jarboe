@@ -108,15 +108,14 @@ if (!function_exists('remove_bom'))
     } // end remove_bom
 }
 
-// @deprecated
 if (!function_exists('img'))
 {
     function img($source, $options = array())
     {
-        return glide($source, $options);
-    } // end img
+        $img = new Img();
+        return $img->get($source, $options);
+    }
 }
-
 if (!function_exists('glide'))
 {
     function glide($source, $options = array())

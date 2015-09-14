@@ -1025,10 +1025,9 @@ var TableBuilder = {
         data.append("image", context.files[0]);
         data.append('ident', ident);
         data.append('query_type', 'upload_photo');
-        data.append('__node', TableBuilder.getUrlParameter('node'));
+        data.append('__node', TableBuilder.getUrlParameter('node') ? TableBuilder.getUrlParameter('node') : $('form input[name="id"]').val());
 
         var $progress = jQuery(context).parent().parent().parent().parent().parent().find('.progress-bar');
-        //console.log($progress);
 
         jQuery.ajax({
             xhr: function() {

@@ -199,7 +199,7 @@ if (Config::get('jarboe::tree.is_active')) {
 
                 // todo: test
                 Route::group(array('prefix' => LaravelLocalization::setLocale(),
-                     'before' => 'cache', 'after' => 'cache'
+                    'after' => 'cash'
                 ) , function() use ($node, $_nodeUrl, $templates)
                 {
 

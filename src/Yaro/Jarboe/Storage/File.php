@@ -108,14 +108,29 @@ class File
         
         foreach ($files as $file) {
             $entity = new $model;
-            $entity->title = Input::get('title');
+
+            if (trim(Input::get('title'))) {
+                $entity->title = trim(Input::get('title'));
+
+            } else {
+                $fileTitle = $file->getClientOriginalName();
+
+                $fileTitle = str_replace(
+                    array($file->guessExtension(), '.'),
+                    array('', ''),
+                    $fileTitle
+                );
+
+                $entity->title = urlify($fileTitle);
+            }
+
             $entity->save();
             
             $mimeType = $file->getMimeType();
             $extension = $file->guessExtension();
             $rawFileName = md5_file($file->getRealPath()) .'_'. time();
             $fileName = $rawFileName .'.'. $extension;
-            
+
             $prefixPath = '/storage/j-files-storage/';
             
             //

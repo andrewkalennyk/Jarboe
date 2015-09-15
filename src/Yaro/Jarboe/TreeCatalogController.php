@@ -83,19 +83,21 @@ class TreeCatalogController
         $model = $this->model;
         
         $root = $model::find(Input::get('node', 1));
-        
+
         $node = new $model();
         $node->parent_id = Input::get('node', 1);
         $node->title     = Input::get('title');
         $node->template  = Input::get('template');
         $node->$activeField = $options ? '' : '0';
+
         $node->save();
-        
+
         $node->slug = Input::get('slug') ? : Input::get('title');
         $node->save();
-        
-        $node->makeChildOf($root);
-        
+
+        // fixme:
+        // $node->makeChildOf($root);
+
         $model::rebuild();
         $model::flushCache();
         

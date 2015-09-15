@@ -202,7 +202,6 @@ if (Config::get('jarboe::tree.is_active')) {
                     'after' => 'cash'
                 ) , function() use ($node, $_nodeUrl, $templates)
                 {
-
                     Route::get($_nodeUrl, function() use ($node, $templates)
                     {
 

@@ -20,7 +20,8 @@
         "yaro/laravel-glide": "1.0.1",
         "yaro/mecha": "0.0.*",
         "mcamara/laravel-localization": "v0.15.1",
-        "lciolecki/php-image-optimizer": "dev-master"
+        "lciolecki/php-image-optimizer": "dev-master",
+        "schickling/laravel-cash": "^0.3.1"
     },
     "repositories": [
         {
@@ -39,3 +40,4 @@
     },
     "minimum-stability": "dev"
 }
+

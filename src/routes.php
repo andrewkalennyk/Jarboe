@@ -186,25 +186,21 @@ if (Config::get('jarboe::tree.is_active')) {
             $slug = "/";
         }
 
-        // echo $slug;
-
         $nodes = $_model::where("slug", 'like', $slug)->get();
 
-
-        foreach($nodes as $node) {
-
+        foreach ($nodes as $node) {
             if (isset($node->id)) {
-
                 $_nodeUrl = $node->getUrlNoLocation();
 
-                // todo: test
-                Route::group(array('prefix' => LaravelLocalization::setLocale(),
-                    'after' => 'cash'
-                ) , function() use ($node, $_nodeUrl, $templates)
+                $routesParams = array('prefix' => LaravelLocalization::setLocale());
+                if (Config::get('jarboe::cache.enabled')) {
+                    $routesParams['after'] = 'cash';
+                }
+
+                Route::group($routesParams, function() use ($node, $_nodeUrl, $templates)
                 {
                     Route::get($_nodeUrl, function() use ($node, $templates)
                     {
-
                         if (!isset($templates[$node->template])) {
                             App::abort(404);
                         }
@@ -229,16 +225,12 @@ if (Config::get('jarboe::tree.is_active')) {
                 }  else {
                     Session::put('currentNode', $node);
                 }
-
-
             }
-
         }
 
     } catch (Exception $e) {
-
+        // todo: implement
     }
-
 }
 
 // devel fallback

@@ -193,7 +193,7 @@ if (Config::get('jarboe::tree.is_active')) {
                 $_nodeUrl = $node->getUrlNoLocation();
 
                 $routesParams = array('prefix' => LaravelLocalization::setLocale());
-                if (Config::get('jarboe::cache.enabled')) {
+                if (Config::get('jarboe::cache.enabled') && !in_array($_nodeUrl, Config::get('jarboe::cache.excluded_urls'))) {
                     $routesParams['after'] = 'cash';
                 }
 

@@ -2,5 +2,6 @@
 
 return array(
 
-    'enabled' => false,
+    'enabled'       => false,
+    'excluded_urls' => array(),
 );

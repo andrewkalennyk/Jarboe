@@ -28,8 +28,6 @@
                     
                     <script type="text/javascript">
                         jQuery(document).ready(function() {
-                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg');
-
                             CKEDITOR.on('instanceCreated', function(e) {
                                 if (e.editor.name === '{{$pre . $name . $tab['postfix']}}-wysiwyg') {
                                     e.editor.on('change', function(event) {
@@ -55,6 +53,8 @@
 
                             CKEDITOR.config.removeButtons = '{{$editorButtons}}';
                             CKEDITOR.config.extraPlugins = "ImageManager";
+
+                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg');
                         });
                     </script>
                 </div>

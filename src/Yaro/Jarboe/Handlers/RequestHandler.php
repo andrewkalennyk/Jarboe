@@ -2,7 +2,12 @@
 
 namespace Yaro\Jarboe\Handlers;
 
+
 use Yaro\Jarboe\JarboeController;
+use Yaro\Jarboe\Interfaces\IObservable;
+use Yaro\Jarboe\Interfaces\IObserver;
+use Yaro\Jarboe\Observers\EventsLogger;
+
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
@@ -10,15 +15,18 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 
 
-class RequestHandler 
+class RequestHandler implements IObservable
 {
 
     protected $controller;
+    private $observers = array();
 
 
     public function __construct(JarboeController $controller)
     {
         $this->controller = $controller;
+
+        $this->attachObserver(new EventsLogger());
     } // end __construct
 
     public function handle()
@@ -87,6 +95,9 @@ class RequestHandler
                 
             case 'redactor_image_upload':
                 return $this->handlePhotoUploadFromWysiwygRedactor();
+
+            case 'ckeditor_image_upload':
+                return $this->handlePhotoUploadFromWysiwygCkeditor();
                 
             case 'change_direction':
                 return $this->handleChangeDirection();
@@ -365,10 +376,9 @@ class RequestHandler
         );
         return Response::json($data);
     } // end handlePhotoUploadFromWysiwyg
-    
+
     protected function handlePhotoUploadFromWysiwygRedactor()
     {
-        // FIXME:
         $file = Input::file('file');
         
         if ($this->controller->hasCustomHandlerMethod('onPhotoUploadFromWysiwyg')) {
@@ -393,13 +403,49 @@ class RequestHandler
         );
         return Response::json($data);
     } // end handlePhotoUploadFromWysiwygRedactor
-    
+
+    protected function handlePhotoUploadFromWysiwygCkeditor()
+    {
+        $file = Input::file('upload');
+        $instance = Input::get('instance');
+
+        if ($this->controller->hasCustomHandlerMethod('onPhotoUploadFromWysiwyg')) {
+            $res = $this->controller->getCustomHandler()->onPhotoUploadFromWysiwyg($file);
+            if ($res) {
+                return $res;
+            }
+        }
+
+        $extension = $file->guessExtension();
+        $fileName = md5_file($file->getRealPath()) .'_'. time() .'.'. $extension;
+
+        $definitionName = $this->controller->getOption('def_name');
+        $prefixPath = 'storage/tb-'.$definitionName.'/';
+        $postfixPath = date('Y') .'/'. date('m') .'/'. date('d') .'/';
+        $destinationPath = $prefixPath . $postfixPath;
+
+        $file->move($destinationPath, $fileName);
+
+        // fime: refactor this wtf!
+        return Response::make(
+            '<html><body>' .
+            '<script src="/js/libs/jquery-1.9.1.js"></script>' .
+            '<script type="text/javascript">window.parent.CKEDITOR.instances["'. $instance .'"].insertHtml("<img src=\''. URL::to($destinationPath . $fileName) .'\'>"); ' .
+            'jQuery(".cke_dialog_ui_button").each(function() { if (jQuery(this).html() == "Cancel") { jQuery(this).click(); }});</script>' .
+            '</body></html>'
+        );
+    } // end handlePhotoUploadFromWysiwygCkeditor
+
     protected function handleDeleteAction()
     {
         $idRow = $this->getRowID();
         $this->checkEditPermission();
 
         $result = $this->controller->query->deleteRow($idRow);
+
+        // todo: init event object
+
+        $this->notifyObserver();
 
         return Response::json($result);
     } // end handleDeleteAction
@@ -416,6 +462,10 @@ class RequestHandler
         $result = $this->controller->query->insertRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
+        // todo: init event object
+
+        $this->notifyObserver();
+
         return Response::json($result);
     } // end handleSaveAddFormAction
 
@@ -425,6 +475,10 @@ class RequestHandler
 
         $result = $this->controller->query->updateRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
+
+        // todo: init event object
+
+        $this->notifyObserver();
 
         return Response::json($result);
     } // end handleSaveEditFormAction
@@ -510,5 +564,36 @@ class RequestHandler
         Session::put($sessionPath, $newFilters);
     } // end _prepareSearchFilters
     
+    public function attachObserver(IObserver $observer)
+    {
+        $this->observers[] = $observer;
+    } // end attachObserver
 
+    public function detachObserver(IObserver $observer)
+    {
+        $newObservers = array();
+        foreach ($this->observers as $obs) {
+            if (($obs !== $observer)) {
+                $newObservers[] = $obs;
+            }
+        }
+
+        $this->observers = $newObservers;
+    } // end detachObserver
+
+    public function notifyObserver()
+    {
+        // todo: implement
+        /*
+        foreach ($this->observers as $obs) {
+            switch (get_class($obs)) {
+                case 'Yaro\Jarboe\Observers\EventsLogger':
+                    $obs->update($this);
+                    break;
+
+                default:
+            }
+        }
+        */
+    } // end notifyObserver
 }

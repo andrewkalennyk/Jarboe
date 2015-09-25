@@ -54,7 +54,9 @@
                             CKEDITOR.config.removeButtons = '{{$editorButtons}}';
                             CKEDITOR.config.extraPlugins = "ImageManager";
 
-                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg');
+                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg', {
+                                filebrowserUploadUrl: '{{ preg_match('~\?~', $action) ? (url($action) .'&query_type=ckeditor_image_upload&instance='. $pre . $name . $tab['postfix'] .'-wysiwyg') : (url($action) .'?query_type=ckeditor_image_upload&instance='. $pre . $name . $tab['postfix'] .'-wysiwyg')}}'
+                            });
                         });
                     </script>
                 </div>

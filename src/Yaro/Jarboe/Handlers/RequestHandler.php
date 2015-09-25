@@ -6,7 +6,7 @@ namespace Yaro\Jarboe\Handlers;
 use Yaro\Jarboe\JarboeController;
 use Yaro\Jarboe\Interfaces\IObservable;
 use Yaro\Jarboe\Interfaces\IObserver;
-use Yaro\Jarboe\Observers\EventsLogger;
+use Yaro\Jarboe\Observers\EventsObserver;
 
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Input;
@@ -26,7 +26,7 @@ class RequestHandler implements IObservable
     {
         $this->controller = $controller;
 
-        $this->attachObserver(new EventsLogger());
+        $this->attachObserver(new EventsObserver());
     } // end __construct
 
     public function handle()

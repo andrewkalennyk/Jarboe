@@ -7,7 +7,7 @@ use Yaro\Jarboe\Interfaces\IObserver;
 use Yaro\Jarboe\Interfaces\IObservable;
 
 
-class EventsLogger implements IObserver
+class EventsObserver implements IObserver
 {
 
 	/*

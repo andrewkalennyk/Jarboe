@@ -2,6 +2,11 @@
 
 namespace Yaro\Jarboe;
 
+use Yaro\Jarboe\Interfaces\IObservable;
+use Yaro\Jarboe\Interfaces\IObserver;
+use Yaro\Jarboe\Observers\EventsObserver;
+use Yaro\Jarboe\Event;
+
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
@@ -10,18 +15,35 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 
-class TreeCatalogController 
+class TreeCatalogController implements IObservable
 {
     protected $model;
     protected $options;
-    
+    private $observers = array();
+    private $event;
     
     public function __construct($model, array $options)
     {
         $this->model   = $model;
         $this->options = $options;
+
+        $this->event = new Event();
+        $this->event->setUserId(\Sentry::getUser()->getId());
+        $this->event->setIp(\Request::getClientIp());
+
+        $this->attachObserver(new EventsObserver());
     } // end __construct
-    
+
+    public function getEvent()
+    {
+        return $this->event;
+    } // end getEvent
+
+    public function setEvent(Event $event)
+    {
+        $this->event = $event;
+    } // end setEvent
+
     // FIXME:
     public function setOptions(array $options = array())
     {
@@ -100,7 +122,13 @@ class TreeCatalogController
 
         $model::rebuild();
         $model::flushCache();
-        
+
+        // log action
+        $this->event->setAction(Event::ACTION_CREATE);
+        $this->event->setEntityTable($node->getTable());
+        $this->event->setEntityId($node->id);
+        $this->notifyObserver();
+
         return Response::json(array(
             'status' => true, 
         ));
@@ -123,7 +151,13 @@ class TreeCatalogController
         $node->save();
         
         $model::flushCache();
-        
+
+        // log action
+        $this->event->setAction(Event::ACTION_CHANGE_ACTIVE_STATUS);
+        $this->event->setEntityTable($node->getTable());
+        $this->event->setEntityId($node->id);
+        $this->notifyObserver();
+
         return Response::json(array(
             'axtive' => true
         ));
@@ -159,7 +193,13 @@ class TreeCatalogController
         $model::flushCache();
 
         $item = $model::find($item->id);
-        
+
+        // log action
+        $this->event->setAction(Event::ACTION_CHANGE_POSITION);
+        $this->event->setEntityTable($item->getTable());
+        $this->event->setEntityId($item->id);
+        $this->notifyObserver();
+
         $data = array(
             'status' => true, 
             'item' => $item, 
@@ -200,10 +240,17 @@ class TreeCatalogController
     public function doDeleteNode()
     {
         $model = $this->model;
-        
+
+        $item = $model::find(Input::get('id'));
         $status = $model::destroy(Input::get('id'));
         $model::flushCache();
-        
+
+        // log action
+        $this->event->setAction(Event::ACTION_REMOVE);
+        $this->event->setEntityTable($item->getTable());
+        $this->event->setEntityId($item->id);
+        $this->notifyObserver();
+
         return Response::json(array(
             'status' => $status
         ));   
@@ -308,8 +355,36 @@ class TreeCatalogController
         $item = $model::find($idNode);
         $result['html'] = View::make('admin::tree.content_row', compact('item'))->render();
 
+        // log action
+        $this->event->setAction(Event::ACTION_UPDATE);
+        $this->event->setEntityTable($item->getTable());
+        $this->event->setEntityId($item->id);
+        $this->notifyObserver();
+
         return Response::json($result);   
     } // end doEditNode
 
+    public function attachObserver(IObserver $observer)
+    {
+        $this->observers[] = $observer;
+    } // end attachObserver
+
+    public function detachObserver(IObserver $observer)
+    {
+        $newObservers = array();
+        foreach ($this->observers as $obs) {
+            if (($obs !== $observer)) {
+                $newObservers[] = $obs;
+            }
+        }
+
+        $this->observers = $newObservers;
+    } // end detachObserver
+
+    public function notifyObserver()
+    {
+        foreach ($this->observers as $obs) {
+            $obs->update($this);
+        }
+    } // end notifyObserver
 }
-    

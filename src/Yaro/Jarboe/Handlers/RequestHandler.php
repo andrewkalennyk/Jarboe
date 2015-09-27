@@ -7,6 +7,7 @@ use Yaro\Jarboe\JarboeController;
 use Yaro\Jarboe\Interfaces\IObservable;
 use Yaro\Jarboe\Interfaces\IObserver;
 use Yaro\Jarboe\Observers\EventsObserver;
+use Yaro\Jarboe\Event;
 
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Input;
@@ -20,14 +21,29 @@ class RequestHandler implements IObservable
 
     protected $controller;
     private $observers = array();
+    private $event;
 
 
     public function __construct(JarboeController $controller)
     {
         $this->controller = $controller;
 
+        $this->event = new Event();
+        $this->event->setUserId(\Sentry::getUser()->getId());
+        $this->event->setIp(\Request::getClientIp());
+
         $this->attachObserver(new EventsObserver());
     } // end __construct
+
+    public function getEvent()
+    {
+        return $this->event;
+    } // end getEvent
+
+    public function setEvent(Event $event)
+    {
+        $this->event = $event;
+    } // end setEvent
 
     public function handle()
     {
@@ -36,8 +52,7 @@ class RequestHandler implements IObservable
         } elseif (Input::has('make')) {
             return $this->handleShowEditFormPageAction();
         }
-        
-        
+
         switch (Input::get('query_type')) {
             case 'image_storage':
                 return $this->controller->imageStorage->handle();
@@ -122,7 +137,17 @@ class RequestHandler implements IObservable
         
         $field = $this->controller->getField($fieldType);
         $errors = $field->doSaveInlineEditForm($idRow, Input::all());
-        
+
+        $definition = $this->controller->getDefinition();
+
+        $this->event->setAction(Event::ACTION_UPDATE);
+        if (isset($definition['db']['table'])) {
+            $this->event->setEntityTable($definition['db']['table']);
+            $this->event->setEntityId($idRow);
+        }
+
+        $this->notifyObserver();
+
         return Response::json(array(
             'status' => empty($errors),
             'errors' => $errors,
@@ -443,7 +468,13 @@ class RequestHandler implements IObservable
 
         $result = $this->controller->query->deleteRow($idRow);
 
-        // todo: init event object
+        $definition = $this->controller->getDefinition();
+
+        $this->event->setAction(Event::ACTION_REMOVE);
+        if (isset($definition['db']['table'])) {
+            $this->event->setEntityTable($definition['db']['table']);
+            $this->event->setEntityId($idRow);
+        }
 
         $this->notifyObserver();
 
@@ -462,7 +493,15 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->insertRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
-        // todo: init event object
+        $definition = $this->controller->getDefinition();
+
+        $this->event->setAction(Event::ACTION_CREATE);
+        if (isset($definition['db']['table'])) {
+            $this->event->setEntityTable($definition['db']['table']);
+        }
+        if (isset($result['id'])) {
+            $this->event->setEntityId($result['id']);
+        }
 
         $this->notifyObserver();
 
@@ -476,7 +515,15 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->updateRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
-        // todo: init event object
+        $definition = $this->controller->getDefinition();
+
+        $this->event->setAction(Event::ACTION_UPDATE);
+        if (isset($definition['db']['table'])) {
+            $this->event->setEntityTable($definition['db']['table']);
+        }
+        if (isset($result['id'])) {
+            $this->event->setEntityId($result['id']);
+        }
 
         $this->notifyObserver();
 
@@ -583,17 +630,8 @@ class RequestHandler implements IObservable
 
     public function notifyObserver()
     {
-        // todo: implement
-        /*
         foreach ($this->observers as $obs) {
-            switch (get_class($obs)) {
-                case 'Yaro\Jarboe\Observers\EventsLogger':
-                    $obs->update($this);
-                    break;
-
-                default:
-            }
+            $obs->update($this);
         }
-        */
     } // end notifyObserver
 }

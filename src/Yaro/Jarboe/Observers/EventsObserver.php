@@ -10,22 +10,9 @@ use Yaro\Jarboe\Interfaces\IObservable;
 class EventsObserver implements IObserver
 {
 
-	/*
-	private $idUser;
-	private $ip;
-	private $action;
-	private $entityTable;
-	private $idEntity;
-	private $info;
-	*/
-
 	public function update(IObservable $observable)
 	{
-		$this->doLog();
-	}
-
-	private function doLog()
-	{
-		// todo: implement
+		$event = $observable->getEvent();
+		$event->save();
 	}
 }

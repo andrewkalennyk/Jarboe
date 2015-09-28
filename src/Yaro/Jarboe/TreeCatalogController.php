@@ -27,13 +27,13 @@ class TreeCatalogController implements IObservable
         $this->model   = $model;
         $this->options = $options;
 
-        /*
-        $this->event = new Event();
-        $this->event->setUserId(\Sentry::getUser()->getId());
-        $this->event->setIp(\Request::getClientIp());
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event = new Event();
+            $this->event->setUserId(\Sentry::getUser()->getId());
+            $this->event->setIp(\Request::getClientIp());
 
-        $this->attachObserver(new EventsObserver());
+            $this->attachObserver(new EventsObserver());
+        }
     } // end __construct
 
     public function getEvent()
@@ -126,12 +126,13 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        /*
-        $this->event->setAction(Event::ACTION_CREATE);
-        $this->event->setEntityTable($node->getTable());
-        $this->event->setEntityId($node->id);
-        $this->notifyObserver();
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CREATE);
+            $this->event->setEntityTable($node->getTable());
+            $this->event->setEntityId($node->id);
+
+            $this->notifyObserver();
+        }
 
         return Response::json(array(
             'status' => true, 
@@ -157,12 +158,13 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        /*
-        $this->event->setAction(Event::ACTION_CHANGE_ACTIVE_STATUS);
-        $this->event->setEntityTable($node->getTable());
-        $this->event->setEntityId($node->id);
-        $this->notifyObserver();
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CHANGE_ACTIVE_STATUS);
+            $this->event->setEntityTable($node->getTable());
+            $this->event->setEntityId($node->id);
+
+            $this->notifyObserver();
+        }
 
         return Response::json(array(
             'axtive' => true
@@ -201,12 +203,13 @@ class TreeCatalogController implements IObservable
         $item = $model::find($item->id);
 
         // log action
-        /*
-        $this->event->setAction(Event::ACTION_CHANGE_POSITION);
-        $this->event->setEntityTable($item->getTable());
-        $this->event->setEntityId($item->id);
-        $this->notifyObserver();
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CHANGE_POSITION);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
 
         $data = array(
             'status' => true, 
@@ -254,12 +257,13 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        /*
-        $this->event->setAction(Event::ACTION_REMOVE);
-        $this->event->setEntityTable($item->getTable());
-        $this->event->setEntityId($item->id);
-        $this->notifyObserver();
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_REMOVE);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
 
         return Response::json(array(
             'status' => $status
@@ -366,12 +370,13 @@ class TreeCatalogController implements IObservable
         $result['html'] = View::make('admin::tree.content_row', compact('item'))->render();
 
         // log action
-        /*
-        $this->event->setAction(Event::ACTION_UPDATE);
-        $this->event->setEntityTable($item->getTable());
-        $this->event->setEntityId($item->id);
-        $this->notifyObserver();
-        */
+        if (Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_UPDATE);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
 
         return Response::json($result);   
     } // end doEditNode

@@ -27,7 +27,7 @@ class TreeCatalogController implements IObservable
         $this->model   = $model;
         $this->options = $options;
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event = new Event();
             $this->event->setUserId(\Sentry::getUser()->getId());
             $this->event->setIp(\Request::getClientIp());
@@ -126,7 +126,7 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event->setAction(Event::ACTION_CREATE);
             $this->event->setEntityTable($node->getTable());
             $this->event->setEntityId($node->id);
@@ -158,7 +158,7 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event->setAction(Event::ACTION_CHANGE_ACTIVE_STATUS);
             $this->event->setEntityTable($node->getTable());
             $this->event->setEntityId($node->id);
@@ -203,7 +203,7 @@ class TreeCatalogController implements IObservable
         $item = $model::find($item->id);
 
         // log action
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event->setAction(Event::ACTION_CHANGE_POSITION);
             $this->event->setEntityTable($item->getTable());
             $this->event->setEntityId($item->id);
@@ -257,7 +257,7 @@ class TreeCatalogController implements IObservable
         $model::flushCache();
 
         // log action
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event->setAction(Event::ACTION_REMOVE);
             $this->event->setEntityTable($item->getTable());
             $this->event->setEntityId($item->id);
@@ -370,7 +370,7 @@ class TreeCatalogController implements IObservable
         $result['html'] = View::make('admin::tree.content_row', compact('item'))->render();
 
         // log action
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event->setAction(Event::ACTION_UPDATE);
             $this->event->setEntityTable($item->getTable());
             $this->event->setEntityId($item->id);

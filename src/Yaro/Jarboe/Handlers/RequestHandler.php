@@ -28,7 +28,7 @@ class RequestHandler implements IObservable
     {
         $this->controller = $controller;
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $this->event = new Event();
             $this->event->setUserId(\Sentry::getUser()->getId());
             $this->event->setIp(\Request::getClientIp());
@@ -140,7 +140,7 @@ class RequestHandler implements IObservable
         $field = $this->controller->getField($fieldType);
         $errors = $field->doSaveInlineEditForm($idRow, Input::all());
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $definition = $this->controller->getDefinition();
 
             $this->event->setAction(Event::ACTION_UPDATE);
@@ -472,7 +472,7 @@ class RequestHandler implements IObservable
 
         $result = $this->controller->query->deleteRow($idRow);
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $definition = $this->controller->getDefinition();
 
             $this->event->setAction(Event::ACTION_REMOVE);
@@ -499,7 +499,7 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->insertRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $definition = $this->controller->getDefinition();
 
             $this->event->setAction(Event::ACTION_CREATE);
@@ -523,7 +523,7 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->updateRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
-        if (Config::get('jarboe::log.enabled')) {
+        if (\Config::get('jarboe::log.enabled')) {
             $definition = $this->controller->getDefinition();
 
             $this->event->setAction(Event::ACTION_UPDATE);

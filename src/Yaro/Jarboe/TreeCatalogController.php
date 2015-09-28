@@ -5,7 +5,7 @@ namespace Yaro\Jarboe;
 use Yaro\Jarboe\Interfaces\IObservable;
 use Yaro\Jarboe\Interfaces\IObserver;
 use Yaro\Jarboe\Observers\EventsObserver;
-use Yaro\Jarboe\Event;
+use Yaro\Jarboe\Entities\Event;
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\View;

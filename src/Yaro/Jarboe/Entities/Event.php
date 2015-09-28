@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaro\Jarboe;
+namespace Yaro\Jarboe\Entities;
 
 
 class Event extends \Eloquent

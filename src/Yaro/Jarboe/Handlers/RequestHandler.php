@@ -7,7 +7,7 @@ use Yaro\Jarboe\JarboeController;
 use Yaro\Jarboe\Interfaces\IObservable;
 use Yaro\Jarboe\Interfaces\IObserver;
 use Yaro\Jarboe\Observers\EventsObserver;
-use Yaro\Jarboe\Event;
+#use Yaro\Jarboe\Event;
 
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Input;
@@ -28,9 +28,11 @@ class RequestHandler implements IObservable
     {
         $this->controller = $controller;
 
+        /*
         $this->event = new Event();
         $this->event->setUserId(\Sentry::getUser()->getId());
         $this->event->setIp(\Request::getClientIp());
+        */
 
         $this->attachObserver(new EventsObserver());
     } // end __construct
@@ -138,6 +140,7 @@ class RequestHandler implements IObservable
         $field = $this->controller->getField($fieldType);
         $errors = $field->doSaveInlineEditForm($idRow, Input::all());
 
+        /*
         $definition = $this->controller->getDefinition();
 
         $this->event->setAction(Event::ACTION_UPDATE);
@@ -147,6 +150,7 @@ class RequestHandler implements IObservable
         }
 
         $this->notifyObserver();
+        */
 
         return Response::json(array(
             'status' => empty($errors),
@@ -468,6 +472,7 @@ class RequestHandler implements IObservable
 
         $result = $this->controller->query->deleteRow($idRow);
 
+        /*
         $definition = $this->controller->getDefinition();
 
         $this->event->setAction(Event::ACTION_REMOVE);
@@ -475,6 +480,7 @@ class RequestHandler implements IObservable
             $this->event->setEntityTable($definition['db']['table']);
             $this->event->setEntityId($idRow);
         }
+        */
 
         $this->notifyObserver();
 
@@ -493,6 +499,7 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->insertRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
+        /*
         $definition = $this->controller->getDefinition();
 
         $this->event->setAction(Event::ACTION_CREATE);
@@ -504,6 +511,7 @@ class RequestHandler implements IObservable
         }
 
         $this->notifyObserver();
+        */
 
         return Response::json($result);
     } // end handleSaveAddFormAction
@@ -515,6 +523,7 @@ class RequestHandler implements IObservable
         $result = $this->controller->query->updateRow(Input::all());
         $result['html'] = $this->controller->view->getRowHtml($result);
 
+        /*
         $definition = $this->controller->getDefinition();
 
         $this->event->setAction(Event::ACTION_UPDATE);
@@ -526,6 +535,7 @@ class RequestHandler implements IObservable
         }
 
         $this->notifyObserver();
+        */
 
         return Response::json($result);
     } // end handleSaveEditFormAction

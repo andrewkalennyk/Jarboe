@@ -8,8 +8,6 @@ class Event extends \Eloquent
 
     protected $table = 'events_log';
 
-
-    
     const ACTION_CREATE = 'create';
     const ACTION_UPDATE = 'update';
     const ACTION_REMOVE = 'remove';

@@ -76,7 +76,10 @@ class TreeCatalogController implements IObservable
                 
             case 'get_edit_modal_form':
                 return $this->getEditModalForm();
-                
+
+            case 'ckeditor_image_upload':
+                return $this->handlePhotoUploadFromWysiwygCkeditor();
+
             default:
                 return $this->handleShowCatalog();
         }
@@ -380,6 +383,30 @@ class TreeCatalogController implements IObservable
 
         return Response::json($result);   
     } // end doEditNode
+
+    protected function handlePhotoUploadFromWysiwygCkeditor()
+    {
+        $file = Input::file('upload');
+        $instance = Input::get('instance');
+
+        $extension = $file->guessExtension();
+        $fileName = md5_file($file->getRealPath()) .'_'. time() .'.'. $extension;
+
+        $prefixPath = 'storage/tb-tree/upload/';
+        $postfixPath = date('Y') .'/'. date('m') .'/'. date('d') .'/';
+        $destinationPath = $prefixPath . $postfixPath;
+
+        $file->move($destinationPath, $fileName);
+
+        // fime: refactor this wtf!
+        return Response::make(
+            '<html><body>' .
+            '<script src="/js/libs/jquery-1.9.1.js"></script>' .
+            '<script type="text/javascript">window.parent.CKEDITOR.instances["'. $instance .'"].insertHtml("<img src=\''. URL::to($destinationPath . $fileName) .'\'>"); ' .
+            'jQuery(".cke_dialog_ui_button").each(function() { if (jQuery(this).html() == "Cancel") { jQuery(this).click(); }});</script>' .
+            '</body></html>'
+        );
+    } // end handlePhotoUploadFromWysiwygCkeditor
 
     public function attachObserver(IObserver $observer)
     {

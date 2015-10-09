@@ -26,6 +26,8 @@
 
         CKEDITOR.config.removeButtons = '{{$editorButtons}}';
         CKEDITOR.config.extraPlugins = "ImageManager";
+        CKEDITOR.config.height = "400";
+        CKEDITOR.config.baseFloatZIndex = "99999";
 
         CKEDITOR.replace('{{$name}}-wysiwyg');
     });

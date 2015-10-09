@@ -2,6 +2,11 @@
 
 namespace Yaro\Jarboe;
 
+use Yaro\Jarboe\Interfaces\IObservable;
+use Yaro\Jarboe\Interfaces\IObserver;
+use Yaro\Jarboe\Observers\EventsObserver;
+use Yaro\Jarboe\Entities\Event;
+
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
@@ -10,18 +15,37 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 
-class TreeCatalogController 
+class TreeCatalogController implements IObservable
 {
     protected $model;
     protected $options;
-    
+    private $observers = array();
+    private $event;
     
     public function __construct($model, array $options)
     {
         $this->model   = $model;
         $this->options = $options;
+
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event = new Event();
+            $this->event->setUserId(\Sentry::getUser()->getId());
+            $this->event->setIp(\Request::getClientIp());
+
+            $this->attachObserver(new EventsObserver());
+        }
     } // end __construct
-    
+
+    public function getEvent()
+    {
+        return $this->event;
+    } // end getEvent
+
+    public function setEvent(Event $event)
+    {
+        $this->event = $event;
+    } // end setEvent
+
     // FIXME:
     public function setOptions(array $options = array())
     {
@@ -52,7 +76,10 @@ class TreeCatalogController
                 
             case 'get_edit_modal_form':
                 return $this->getEditModalForm();
-                
+
+            case 'ckeditor_image_upload':
+                return $this->handlePhotoUploadFromWysiwygCkeditor();
+
             default:
                 return $this->handleShowCatalog();
         }
@@ -100,7 +127,16 @@ class TreeCatalogController
 
         $model::rebuild();
         $model::flushCache();
-        
+
+        // log action
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CREATE);
+            $this->event->setEntityTable($node->getTable());
+            $this->event->setEntityId($node->id);
+
+            $this->notifyObserver();
+        }
+
         return Response::json(array(
             'status' => true, 
         ));
@@ -123,7 +159,16 @@ class TreeCatalogController
         $node->save();
         
         $model::flushCache();
-        
+
+        // log action
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CHANGE_ACTIVE_STATUS);
+            $this->event->setEntityTable($node->getTable());
+            $this->event->setEntityId($node->id);
+
+            $this->notifyObserver();
+        }
+
         return Response::json(array(
             'axtive' => true
         ));
@@ -159,7 +204,16 @@ class TreeCatalogController
         $model::flushCache();
 
         $item = $model::find($item->id);
-        
+
+        // log action
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_CHANGE_POSITION);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
+
         $data = array(
             'status' => true, 
             'item' => $item, 
@@ -200,10 +254,20 @@ class TreeCatalogController
     public function doDeleteNode()
     {
         $model = $this->model;
-        
+
+        $item = $model::find(Input::get('id'));
         $status = $model::destroy(Input::get('id'));
         $model::flushCache();
-        
+
+        // log action
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_REMOVE);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
+
         return Response::json(array(
             'status' => $status
         ));   
@@ -308,8 +372,63 @@ class TreeCatalogController
         $item = $model::find($idNode);
         $result['html'] = View::make('admin::tree.content_row', compact('item'))->render();
 
+        // log action
+        if (\Config::get('jarboe::log.enabled')) {
+            $this->event->setAction(Event::ACTION_UPDATE);
+            $this->event->setEntityTable($item->getTable());
+            $this->event->setEntityId($item->id);
+
+            $this->notifyObserver();
+        }
+
         return Response::json($result);   
     } // end doEditNode
 
+    protected function handlePhotoUploadFromWysiwygCkeditor()
+    {
+        $file = Input::file('upload');
+        $instance = Input::get('instance');
+
+        $extension = $file->guessExtension();
+        $fileName = md5_file($file->getRealPath()) .'_'. time() .'.'. $extension;
+
+        $prefixPath = 'storage/tb-tree/upload/';
+        $postfixPath = date('Y') .'/'. date('m') .'/'. date('d') .'/';
+        $destinationPath = $prefixPath . $postfixPath;
+
+        $file->move($destinationPath, $fileName);
+
+        // fime: refactor this wtf!
+        return Response::make(
+            '<html><body>' .
+            '<script src="/js/libs/jquery-1.9.1.js"></script>' .
+            '<script type="text/javascript">window.parent.CKEDITOR.instances["'. $instance .'"].insertHtml("<img src=\''. URL::to($destinationPath . $fileName) .'\'>"); ' .
+            'jQuery(".cke_dialog_ui_button").each(function() { if (jQuery(this).html() == "Cancel") { jQuery(this).click(); }});</script>' .
+            '</body></html>'
+        );
+    } // end handlePhotoUploadFromWysiwygCkeditor
+
+    public function attachObserver(IObserver $observer)
+    {
+        $this->observers[] = $observer;
+    } // end attachObserver
+
+    public function detachObserver(IObserver $observer)
+    {
+        $newObservers = array();
+        foreach ($this->observers as $obs) {
+            if (($obs !== $observer)) {
+                $newObservers[] = $obs;
+            }
+        }
+
+        $this->observers = $newObservers;
+    } // end detachObserver
+
+    public function notifyObserver()
+    {
+        foreach ($this->observers as $obs) {
+            $obs->update($this);
+        }
+    } // end notifyObserver
 }
-    

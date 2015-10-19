@@ -370,7 +370,32 @@ var Tree =
 
         });
     }, // end doDelete
-    
+
+    doClone: function(id)
+    {
+        TableBuilder.showPreloader();
+
+        $.post(
+            location.pathname,
+            { "query_type": "clone_record", "id": id },
+            function(response) {
+                Tree.doRebuildTree();
+            }
+        );
+    }, // end doClone
+
+    doRebuildTree: function()
+    {
+        jQuery.ajax({
+            type:   "POST",
+            url:    location.pathname,
+            data:   { query_type: 'do_rebuild_tree' },
+            dataType: 'json',
+            success: function(response) {
+                window.location.reload();
+            }
+        });
+    } // end doRebuildTree
 };
 
 

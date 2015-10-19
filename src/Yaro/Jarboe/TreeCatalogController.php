@@ -71,6 +71,9 @@ class TreeCatalogController implements IObservable
 
             case 'clone_record':
                 return $this->doCloneNode();
+
+            case 'do_rebuild_tree':
+                return $this->doRebuildTree();
                 
             case 'do_edit_node':
                 return $this->doEditNode();
@@ -122,9 +125,6 @@ class TreeCatalogController implements IObservable
         foreach ($locales as $locale) {
             if ($locale == 'ua') {
                 $node->title = Input::get('title');
-            } else {
-                $field = 'title_'. $locale;
-                $node->$field = Input::get('title_'. $locale);
             }
         }
 
@@ -449,7 +449,7 @@ class TreeCatalogController implements IObservable
     public function doCloneNode($id = 0, $parent_id = 0)
     {
         $model = $this->model;
-        $idNode    = Input::get('id');
+        $idNode = Input::get('id');
 
         if ($id) {
             $idNode = $id;
@@ -470,19 +470,23 @@ class TreeCatalogController implements IObservable
 
         $children = $data->children()->get();
 
-        $data->id;
-
         if (count($children)) {
            foreach ($children as $child) {
                $this->doCloneNode($child->id, $newItem->id);
            }
+
         } else {
-           // $model::rebuild();
-            $model::flushCache();
+           $model::flushCache();
+
            echo "ok";
         }
     }
 
+    public function doRebuildTree()
+    {
+        $model = $this->model;
+        $model::rebuild();
 
-
+        return Response::json(array('status' => true));
+    }
 }

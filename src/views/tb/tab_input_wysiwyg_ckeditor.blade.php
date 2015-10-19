@@ -1,6 +1,6 @@
 <section>
     <div class="tab-pane active">
-                
+
         <ul class="nav nav-tabs tabs-pull-right">
             <label class="label pull-left" style="line-height: 32px;">{{$caption}}</label>
             @foreach ($tabs as $tab)
@@ -9,23 +9,23 @@
                 @else
                     <li class="">
                 @endif
-                
+
                     <a href="#{{$pre .  $name . $tab['postfix']}}" data-toggle="tab">{{$tab['caption']}}</a>
                 </li>
             @endforeach
         </ul>
-        
+
         <div class="tab-content padding-5">
             @foreach ($tabs as $tab)
-                
+
                 @if ($loop->first)
                     <div class="tab-pane active" id="{{ $pre . $name . $tab['postfix']}}">
                 @else
                     <div class="tab-pane" id="{{ $pre . $name . $tab['postfix']}}">
                 @endif
-                    
+
                     <textarea id="{{$pre . $name . $tab['postfix']}}-wysiwyg" name="{{ $name . $tab['postfix'] }}" class="ckeditor">{{ $tab['value'] }}</textarea>
-                    
+
                     <script type="text/javascript">
                         jQuery(document).ready(function() {
                             CKEDITOR.on('instanceCreated', function(e) {
@@ -53,10 +53,10 @@
 
                             CKEDITOR.config.removeButtons = '{{$editorButtons}}';
                             CKEDITOR.config.extraPlugins = "ImageManager";
+                            CKEDITOR.config.height = "400";
+                            CKEDITOR.config.baseFloatZIndex = "99999";
 
-                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg', {
-                                filebrowserUploadUrl: '{{ preg_match('~\?~', $action) ? (url($action) .'&query_type=ckeditor_image_upload&instance='. $pre . $name . $tab['postfix'] .'-wysiwyg') : (url($action) .'?query_type=ckeditor_image_upload&instance='. $pre . $name . $tab['postfix'] .'-wysiwyg')}}'
-                            });
+                            CKEDITOR.replace('{{$pre . $name . $tab['postfix']}}-wysiwyg');
                         });
                     </script>
                 </div>

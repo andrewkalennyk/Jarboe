@@ -55,6 +55,7 @@ class RequestHandler implements IObservable
             return $this->handleShowEditFormPageAction();
         }
 
+
         switch (Input::get('query_type')) {
             case 'image_storage':
                 return $this->controller->imageStorage->handle();
@@ -79,6 +80,9 @@ class RequestHandler implements IObservable
                 
             case 'get_import_template':
                 return $this->handleImportTemplateDownload();
+
+            case 'clone_record':
+                return $this->handleCloneAction();
                 
             case 'export':
                 return $this->handleExport();
@@ -644,4 +648,14 @@ class RequestHandler implements IObservable
             $obs->update($this);
         }
     } // end notifyObserver
+
+    protected function handleCloneAction()
+    {
+        $idRow = $this->_getRowID();
+        $this->checkEditPermission($idRow);
+        $result = $this->controller->query->cloneRow($idRow);
+        $result['html'] = $this->controller->view->getRowHtml($result);
+
+        return Response::json($result);
+    } // end handleDeleteAction
 }

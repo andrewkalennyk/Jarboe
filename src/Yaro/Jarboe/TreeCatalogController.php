@@ -54,6 +54,7 @@ class TreeCatalogController implements IObservable
 
     public function handle()
     {
+
         switch (Input::get('query_type')) {
             
             case 'do_create_node':
@@ -67,6 +68,9 @@ class TreeCatalogController implements IObservable
             
             case 'do_delete_node':
                 return $this->doDeleteNode();
+
+            case 'clone_record':
+                return $this->doCloneNode();
                 
             case 'do_edit_node':
                 return $this->doEditNode();
@@ -106,6 +110,7 @@ class TreeCatalogController implements IObservable
     public function doCreateNode()
     {
         $activeField = \Config::get('jarboe::tree.node_active_field.field');
+        $locales = \Config::get('jarboe::translate.locales');
         $options = \Config::get('jarboe::tree.node_active_field.options', false);
         $model = $this->model;
         
@@ -113,7 +118,16 @@ class TreeCatalogController implements IObservable
 
         $node = new $model();
         $node->parent_id = Input::get('node', 1);
-        $node->title     = Input::get('title');
+
+        foreach ($locales as $locale) {
+            if ($locale == 'ua') {
+                $node->title = Input::get('title');
+            } else {
+                $field = 'title_'. $locale;
+                $node->$field = Input::get('title_'. $locale);
+            }
+        }
+
         $node->template  = Input::get('template');
         $node->$activeField = $options ? '' : '0';
 
@@ -431,4 +445,44 @@ class TreeCatalogController implements IObservable
             $obs->update($this);
         }
     } // end notifyObserver
+
+    public function doCloneNode($id = 0, $parent_id = 0)
+    {
+        $model = $this->model;
+        $idNode    = Input::get('id');
+
+        if ($id) {
+            $idNode = $id;
+        }
+
+        $data = $model::find($idNode);
+
+        $data->slug = $data->slug.time();
+        $data->title = $data->title;
+        $data->is_active = "";
+
+        if ($parent_id) {
+            $data->parent_id = $parent_id;
+        }
+
+        $newItem = $data->replicate();
+        $newItem->save();
+
+        $children = $data->children()->get();
+
+        $data->id;
+
+        if (count($children)) {
+           foreach ($children as $child) {
+               $this->doCloneNode($child->id, $newItem->id);
+           }
+        } else {
+           // $model::rebuild();
+            $model::flushCache();
+           echo "ok";
+        }
+    }
+
+
+
 }

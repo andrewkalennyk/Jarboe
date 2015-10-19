@@ -53,13 +53,19 @@
         @endif
     </td>
     <td>
-        <a class="btn btn-default btn-sm" href="{{ url($item->getUrl()) }}?show=1" target="_blank">
+        <a class="btn btn-default btn-sm" href="{{ url($item->getUrl()) }}?show=1" target="_blank" title="Предпросмотр">
             <i class="fa fa-eye"></i>
         </a>
-        <a onclick="Tree.showEditForm('{{ $item->id }}');" class="btn btn-default btn-sm" href="javascript:void(0);">
-            <i class="fa fa-pencil"></i>
+
+        <a onclick="Tree.showEditForm('{{ $item->id }}');" class="btn btn-default btn-sm" href="javascript:void(0);"  title="Редактировать">
+                    <i class="fa fa-pencil"></i>
         </a>
-        <a onclick="Tree.doDelete('{{ $item->id }}', this);" class="node-del-{{$item->id}} btn btn-default btn-sm" href="javascript:void(0);">
+        @if(Input::has("node") && Input::get("node") != 1)
+            <a onclick="Tree.doClone('{{ $item->id }}');" class="btn btn-default btn-sm" href="javascript:void(0);"  title="Клонировать">
+                <i class="fa fa-copy"></i>
+            </a>
+        @endif
+        <a onclick="Tree.doDelete('{{ $item->id }}', this);"  title="Удалить" class="node-del-{{$item->id}} btn btn-default btn-sm" href="javascript:void(0);">
             <i class="fa fa-times"></i>
         </a>
     </td>

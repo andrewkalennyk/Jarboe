@@ -1,7 +1,6 @@
 <?php
 
 return array(
-
 	'ckeditor' => array(
 
 		'buttons' => array(

@@ -12,7 +12,7 @@ var TableBuilder = {
     form_edit: '#modal_form_edit',
     export_form: '#tb-export-form',
     form_label: '#modal_form_edit_label',
-    form_wrapper: '#modal_wrapper_container',
+    form_wrapper: '#modal_wrapper',
     image_storage_wrapper: '#modal_image_storage_wrapper',
     create_form: '#create_form',
     edit_form: '#edit_form',
@@ -33,9 +33,9 @@ var TableBuilder = {
         TableBuilder.initSelect2Hider();
         //TableBuilder.initImageEditable();
     }, // end init
-
+    
     getActionUrl: function()
-    {
+    { 
         // FIXME:
         return !!TableBuilder.options ? TableBuilder.options.action_url : '/admin/handle/tree';
     }, // end getActionUrl
@@ -60,7 +60,7 @@ var TableBuilder = {
                         return
                     }
                     var r = e("<div>").text(t.tbalt).html() + "" + e("<div>").text(t.tbtitle).html() +
-                        "" + e("<div>").text(t.tbident).html();
+                            "" + e("<div>").text(t.tbident).html();
                     e(n).html(r)
                 },
                 html2value: function (e) {
@@ -125,8 +125,8 @@ var TableBuilder = {
                         return
                     }
                     var r = e("<div>").text(t.tbalt).html() + "" + e("<div>").text(t.tbtitle).html() +
-                        "" + e("<div>").text(t.tbident).html() +
-                        "" + e("<div>").text(t.tbnum).html();
+                            "" + e("<div>").text(t.tbident).html() +
+                            "" + e("<div>").text(t.tbnum).html();
                     e(n).html(r)
                 },
                 html2value: function (e) {
@@ -213,9 +213,9 @@ var TableBuilder = {
                         return;
                     }
                     var html = '<b>' + jQuery('<div>').text(value.tbalt).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbtitle).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbident).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbnum).html();
+                             + jQuery('<div>').text(value.tbtitle).html() + '</b>, '
+                             + jQuery('<div>').text(value.tbident).html() + '</b>, '
+                             + jQuery('<div>').text(value.tbnum).html();
                     jQuery(this).html(html);
                 }
             });
@@ -260,9 +260,9 @@ var TableBuilder = {
                         return;
                     }
                     var html = '<b>' + jQuery('<div>').text(value.tbalt).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbtitle).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbident).html() + '</b>, '
-                        + jQuery('<div>').text(value.tbnum).html();
+                             + jQuery('<div>').text(value.tbtitle).html() + '</b>, '
+                             + jQuery('<div>').text(value.tbident).html() + '</b>, '
+                             + jQuery('<div>').text(value.tbnum).html();
                     jQuery(this).html(html);
                 }
             });
@@ -343,7 +343,7 @@ var TableBuilder = {
                     return {"name": this.name, "value": 0};
                 }).get()
         );
-
+        
         var $posting = jQuery.post(TableBuilder.getActionUrl(), data);
 
         $posting.done(function(response) {
@@ -457,14 +457,14 @@ var TableBuilder = {
         });
     }, // end saveFastEdit
 
-    getUrlParameter: function(sParam)
+    getUrlParameter: function(sParam) 
     {
         var sPageURL = window.location.search.substring(1);
         var sURLVariables = sPageURL.split('&');
-        for (var i = 0; i < sURLVariables.length; i++)
+        for (var i = 0; i < sURLVariables.length; i++) 
         {
             var sParameterName = sURLVariables[i].split('=');
-            if (sParameterName[0] == sParam)
+            if (sParameterName[0] == sParam) 
             {
                 return sParameterName[1];
             }
@@ -518,18 +518,18 @@ var TableBuilder = {
             jQuery.each(jQuery('.tb-uploaded-image-container', TableBuilder.create_form), function (i) {
                 if (jQuery(this).find('ul').length) {
                     jQuery(this).find('ul').html('');
-                } else {
+                } else {    
                     jQuery(this).html('');
                 }
             });
         }
-
+        
         // default datetime value
         if (jQuery('.datetime-default-value', TableBuilder.create_form).length) {
             $.each($('.datetime-default-value', TableBuilder.create_form), function() {
                 var $input = $(this);
                 var value = $input.data('default') == 'now' ? (new Date()) : $input.data('default');
-
+                
                 $input.datetimepicker('setDate', value);
             });
         }
@@ -541,16 +541,16 @@ var TableBuilder = {
 
         TableBuilder.hidePreloader();
     }, // end getCreateForm
-
+    
     initSelect2Hider: function()
     {
         jQuery('.modal-dialog').on('click', function() {
             jQuery('.select2-enabled[id^="many2many"]').select2("close");
             jQuery('.select2-hidden-accessible').hide();
         });
-
+        
     }, // end initSelect2Hider
-
+    
     getEditForm: function(id, context)
     {
         TableBuilder.showPreloader();
@@ -817,7 +817,7 @@ var TableBuilder = {
                     return {"name": this.name, "value": 0};
                 }).get()
         );
-
+        
         var selectMultiple = [];
         jQuery(TableBuilder.edit_form).find('select[multiple="multiple"]').each(function(i, value) {
             if (!$(this).val()) {
@@ -827,7 +827,7 @@ var TableBuilder = {
         console.table(selectMultiple);
         values = values.concat(selectMultiple);
         console.table(values);
-
+        
         console.log(values);
         jQuery.ajax({
             type: "POST",
@@ -851,7 +851,7 @@ var TableBuilder = {
                         window.history.back();
                         return;
                     }
-
+                    
                     jQuery(TableBuilder.form_edit).modal('hide');
 
                     jQuery('#wid-id-1').find('tr[data-editing="true"]').replaceWith(response.html);
@@ -894,14 +894,14 @@ var TableBuilder = {
             .not(':button, :submit, :reset, input[type="hidden"], :radio, :checkbox')
             .val('');
         jQuery('textarea', context).text('');
-
+        
         // summernote
         if (jQuery('div[id$="-wysiwyg"]', context).length) {
             jQuery('div[id$="-wysiwyg"]', context).code('');
         }
         // redactor
         jQuery('textarea[id$="-wysiwyg"]').redactor('code.set', '');
-
+        
         jQuery('input, textarea', context).removeClass('valid').removeClass('invalid');
         jQuery('.state-success, .state-error', context).removeClass('state-success').removeClass('state-error');
     }, // end removeInputValues
@@ -925,7 +925,7 @@ var TableBuilder = {
                 };
             }
         });
-
+        
         var selectMultiple = [];
         jQuery(TableBuilder.create_form).find('select[multiple="multiple"]').each(function(i, value) {
             if (!$(this).val()) {
@@ -940,7 +940,7 @@ var TableBuilder = {
         if (TableBuilder.onDoCreate) {
             values = TableBuilder.onDoCreate(values);
         }
-        console.log(values);
+console.log(values);
         /* Because serializeArray() ignores unset checkboxes and radio buttons: */
         values = values.concat(
             jQuery(TableBuilder.create_form).find('input[type=checkbox]:not(:checked)')
@@ -971,22 +971,22 @@ var TableBuilder = {
                         window.history.back();
                         return;
                     }
-
-                    jQuery('#wid-id-1').find('tbody').first().prepend(response.html);
+                    
+                    jQuery('#wid-id-1').find('tbody').prepend(response.html);
 
                     TableBuilder.removeInputValues(TableBuilder.form);
                     jQuery(TableBuilder.form).modal('hide');
 
                 } else {
                     /*
-                     jQuery.smallBox({
-                     title : "Что-то пошло не так, попробуйте позже",
-                     content : "",
-                     color : "#C46A69",
-                     iconSmall : "fa fa-times fa-2x fadeInRight animated",
-                     timeout : 4000
-                     });
-                     */
+                    jQuery.smallBox({
+                        title : "Что-то пошло не так, попробуйте позже",
+                        content : "",
+                        color : "#C46A69",
+                        iconSmall : "fa fa-times fa-2x fadeInRight animated",
+                        timeout : 4000
+                    });
+                    */
                     var errors = '';
                     jQuery(response.errors).each(function(key, val) {
                         errors += val +'<br>';
@@ -1025,36 +1025,37 @@ var TableBuilder = {
         data.append("image", context.files[0]);
         data.append('ident', ident);
         data.append('query_type', 'upload_photo');
-        data.append('__node', TableBuilder.getUrlParameter('node') ? TableBuilder.getUrlParameter('node') : $('form input[name="id"]').val());
-
+        data.append('__node', TableBuilder.getUrlParameter('node'));
+        
         var $progress = jQuery(context).parent().parent().parent().parent().parent().find('.progress-bar');
-
+        //console.log($progress);
+        
         jQuery.ajax({
             xhr: function() {
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt) {
-                    console.log(evt);
+                    console.log(evt); 
                     if (evt.lengthComputable) {
                         var percentComplete = evt.loaded / evt.total;
                         percentComplete = percentComplete * 100;
-                        console.log('upl :'+ percentComplete);
-
+                        console.log('upl :'+ percentComplete); 
+                        
                         percentComplete = percentComplete +'%';
                         //Do something with upload progress here
-
+                        
                         $progress.width(percentComplete);
                     }
-                }, false);
-
-                xhr.addEventListener("progress", function(evt) {
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
+               }, false);
+        
+               xhr.addEventListener("progress", function(evt) {
+                   if (evt.lengthComputable) {
+                       var percentComplete = evt.loaded / evt.total;
                         console.log('dwl :'+ percentComplete);
-                        //Do something with download progress
-                    }
-                }, false);
-
-                return xhr;
+                       //Do something with download progress
+                   }
+               }, false);
+        
+               return xhr;
             },
             data: data,
             type: "POST",
@@ -1066,8 +1067,8 @@ var TableBuilder = {
                 if (response.status) {
                     //jQuery(context).parent().next().val(response.short_link);
                     $progress.width('0%');
-
-
+                    
+                    
                     TableBuilder.storage[ident] = {
                         'alt'  : '',
                         'title': '',
@@ -1113,9 +1114,9 @@ var TableBuilder = {
         data.append('ident', ident);
         data.append('query_type', 'upload_photo');
         data.append('__node', TableBuilder.getUrlParameter('node'));
-
+        
         var $progress = jQuery(context).parent().parent().parent().parent().parent().find('.progress-bar');
-
+        
 
         var num = 0;
         if (typeof TableBuilder.storage[ident] !== 'undefined') {
@@ -1129,28 +1130,28 @@ var TableBuilder = {
             xhr: function() {
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt) {
-                    console.log(evt);
+                    console.log(evt); 
                     if (evt.lengthComputable) {
                         var percentComplete = evt.loaded / evt.total;
                         percentComplete = percentComplete * 100;
-                        console.log('upl :'+ percentComplete);
-
+                        console.log('upl :'+ percentComplete); 
+                        
                         percentComplete = percentComplete +'%';
                         //Do something with upload progress here
-
+                        
                         $progress.width(percentComplete);
                     }
-                }, false);
-
-                xhr.addEventListener("progress", function(evt) {
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
+               }, false);
+        
+               xhr.addEventListener("progress", function(evt) {
+                   if (evt.lengthComputable) {
+                       var percentComplete = evt.loaded / evt.total;
                         console.log('dwl :'+ percentComplete);
-                        //Do something with download progress
-                    }
-                }, false);
-
-                return xhr;
+                       //Do something with download progress
+                   }
+               }, false);
+        
+               return xhr;
             },
             data: data,
             type: "POST",
@@ -1160,9 +1161,9 @@ var TableBuilder = {
             processData: false,
             success: function(response) {
                 if (response.status) {
-
+                
                     $progress.width('0%');
-
+                    
                     if (!num) {
                         TableBuilder.storage[ident] = [];
                     }
@@ -1171,14 +1172,14 @@ var TableBuilder = {
                         'title': '',
                         'sizes': response.data.sizes
                     });
-                    console.log(num);
+console.log(num);
                     var html = '';
                     html += '<li>';
                     html += '<img src="'+ response.link +'" class="images-attr-editable" '+
-                    'data-tbnum="'+ num +'" '+
-                    'data-tbalt="" '+
-                    'data-tbtitle="" '+
-                    'data-tbident="'+ ident +'" />';
+                                 'data-tbnum="'+ num +'" '+
+                                 'data-tbalt="" '+
+                                 'data-tbtitle="" '+
+                                 'data-tbident="'+ ident +'" />';
                     html += '<div class="tb-btn-delete-wrap">';
                     html +=   '<button class="btn btn-default btn-sm tb-btn-image-delete" '
                     html +=         'type="button" '
@@ -1213,7 +1214,7 @@ var TableBuilder = {
         // remove deleted image from storage
         TableBuilder.storage[ident][num].remove = true;
     }, // end deleteImage
-
+    
     deleteSingleImage: function(ident, context)
     {
         var $imageWrapper = jQuery(context).parent().parent();
@@ -1543,7 +1544,7 @@ var TableBuilder = {
             dataType: 'json',
             success: function(response) {
                 jQuery(context).parent().parent().parent().removeClass('open');
-
+                
                 if (response.status) {
                     if (response.is_hide_rows) {
                         jQuery(response.ids).each(function(key, val) {
@@ -1568,11 +1569,11 @@ var TableBuilder = {
             }
         });
     }, // end doMultiActionCallWithOption
-
-    saveOrder: function(order)
+    
+    saveOrder: function(order) 
     {
         console.log(order);
-
+        
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -1587,25 +1588,21 @@ var TableBuilder = {
             }
         });
     }, // end saveOrder
-
+    
     openImageStorageModal: function(context, storageTypeSelect)
     {
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
-            data: {
-                query_type:             'image_storage',
-                storage_type:           'show_modal',
-                "__node":               TableBuilder.getUrlParameter('node'),
-                storage_type_select:    storageTypeSelect
-            },
+            data: { query_type: 'image_storage', storage_type: 'show_modal', "__node": TableBuilder.getUrlParameter('node'), storage_type_select: storageTypeSelect },
             dataType: 'json',
             success: function(response) {
+            console.log(response);
                 if (response.status) {
                     $(TableBuilder.image_storage_wrapper).html(response.html);
                     $('.image_storage_wrapper').show();
                     $('.tb-modal:visible').addClass('superbox-modal-hide').hide();
-
+                    
                     Superbox.input = $(context).parent().parent().find('input');
                     Superbox.type_select = storageTypeSelect;
                 } else {
@@ -1614,13 +1611,13 @@ var TableBuilder = {
             }
         });
     }, // end openImageStorageModal
-
+    
     closeImageStorageModal: function()
     {
         $('.image_storage_wrapper').hide();
         $('.superbox-modal-hide').removeClass('superbox-modal-hide').show();
     }, // end closeImageStorageModal
-
+    
     openFileStorageModal: function(context)
     {
         jQuery.ajax({
@@ -1629,12 +1626,12 @@ var TableBuilder = {
             data: { query_type: 'file_storage', storage_type: 'show_modal', "__node": TableBuilder.getUrlParameter('node') },
             dataType: 'json',
             success: function(response) {
-                console.log(response);
+            console.log(response);
                 if (response.status) {
                     $(TableBuilder.image_storage_wrapper).html(response.html);
                     $('.image_storage_wrapper').show();
                     $('.tb-modal:visible').addClass('superbox-modal-hide').hide();
-
+                    
                     FileStorage.input = $(context).parent().parent().find('input');
                 } else {
                     TableBuilder.showErrorNotification('Что-то пошло не так');
@@ -1642,7 +1639,7 @@ var TableBuilder = {
             }
         });
     }, // end openFileStorageModal
-
+    
     sendInlineEditForm: function(context, field, idRow)
     {
         var data = $(context).closest('.tb-inline-edit-container').find("select, textarea, input").serializeArray();
@@ -1650,9 +1647,9 @@ var TableBuilder = {
         data.push({ name: '__field_type', value: field });
         data.push({ name: 'query_type', value: 'save_inline_form' });
         data.push({ name: '__node', value: TableBuilder.getUrlParameter('node') });
-
+        
         console.table(data);
-
+        
         jQuery.ajax({
             type: "POST",
             url: TableBuilder.getActionUrl(),
@@ -1670,9 +1667,18 @@ var TableBuilder = {
         });
     }, // end sendInlineEditForm
 
-    clearStorageImage: function(context)
+    removeFile: function(context, id)
     {
-        $(context).parent().prev().children().first().val('');
-        $(context).parent().next().next().children().remove();
-    } // end clearStorageImage
+        var input = jQuery('input#' + id);
+
+        input.val('');
+        input.attr('placeholder', '');
+
+        jQuery(context).prev().remove();
+        jQuery(context).remove();
+
+        // fixme: maybe delete physical file (but what about copied articles?)
+
+        return true;
+    } // end removeFile
 };

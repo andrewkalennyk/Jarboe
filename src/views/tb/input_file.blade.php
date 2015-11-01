@@ -13,6 +13,7 @@
 
 <div class="tb-uploaded-file-container-{{$name}}">
     @if ($value)
-    <a href="{{url($value)}}" target="_blank">Скачать</a>
+        <a href="{{url($value)}}" target="_blank">Скачать</a>
+        <a href="javascript:void(0);" onclick="TableBuilder.removeFile(this, '{{$name}}');">Удалить</a>
     @endif
 </div>

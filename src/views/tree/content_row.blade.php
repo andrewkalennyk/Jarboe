@@ -53,7 +53,31 @@
         @endif
     </td>
     <td>
-        <a class="btn btn-default btn-sm" href="{{ url($item->getUrl()) }}?show=1" target="_blank" title="Предпросмотр">
+        <?
+        $parent = null;
+        if ($item->template == 'Информационный блок (таб)' || $item->template == 'Информационный блок') {
+            $parent = $item->parent;
+            if ($parent->template == 'Информационный блок (таб)' || $parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок (таб)') {
+                $parent = $parent->parent;
+                if ($parent->template == 'Информационный блок (таб)' || $parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок (таб)') {
+                    $parent = $parent->parent;
+                    if ($parent->template == 'Информационный блок (таб)' || $parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок' || $parent->parent->template == 'Информационный блок (таб)') {
+                        $parent = $parent->parent;
+                    } else {
+                        $tempItem = $parent;
+                    }
+                } else {
+                    $tempItem = $parent;
+                }
+            } else {
+                $tempItem = $parent;
+            }
+        } else {
+            $tempItem = $item;
+        }
+
+        ?>
+        <a class="btn btn-default btn-sm" href="{{url($tempItem->getUrl()) }}?show=1" target="_blank" title="Предпросмотр">
             <i class="fa fa-eye"></i>
         </a>
 

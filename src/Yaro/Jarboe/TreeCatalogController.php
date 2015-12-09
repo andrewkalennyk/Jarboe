@@ -129,6 +129,7 @@ class TreeCatalogController implements IObservable
         }
 
         $node->template  = Input::get('template');
+        $node->title_ru  = Input::has('title_ru') ? Input::get('title_ru') : '' ;
         $node->$activeField = $options ? '' : '0';
 
         $node->save();

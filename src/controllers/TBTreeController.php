@@ -211,6 +211,7 @@ class TBTreeController extends \Controller
         $node->parent_id = Input::get('node', 1);
         $node->title     = Input::get('title');
         $node->title_ru  = Input::get('title_ru');
+        $node->title_en  = Input::get('title_en');
         $node->slug      = Input::get('slug') ? : Input::get('title');
         $node->template  = Input::get('template');
         $node->is_active = '0';

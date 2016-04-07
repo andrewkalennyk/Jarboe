@@ -8,11 +8,24 @@
 @section('main')
 
     <div id="table-preloader" class="smoke_lol"><i class="fa fa-gear fa-4x fa-spin"></i></div>
-              
-    <div id="fff" style="height:300px;overflow-x: hidden;overflow-y: auto;background-color: #fff;margin-bottom: 25px;  border-bottom: solid #888 2px;">
-    <div>@include('admin::tree.tree_header')</div>
-    <div style="padding: 0px; vertical-align: top;text-align: left;background-color: #fff;">@include('admin::tree.tree')</div>
-    </div>    
+    <p><a class="show_hide_tree" data-show="0" data-action="open" style="cursor: pointer">Показать дерево</a></p>
+    {{--<div id="fff" style="height:300px;overflow-x: hidden;overflow-y: auto;background-color: #fff;margin-bottom: 25px;  border-bottom: solid #888 2px; display: none">
+    <div>--}}{{--@include('admin::tree.tree_header')--}}{{--</div>
+    <div style="padding: 0px; vertical-align: top;text-align: left;background-color: #fff;">--}}{{--@include('admin::tree.tree')--}}{{--</div>
+    </div>--}}
+
+    <script>
+        jQuery(document).on( "click", ".show_hide_tree", function(e)
+        {
+            Tree.showAllTree();
+
+        });
+
+    </script>
+
+    <div id="tree_top">
+        <div class="tree_top_content"></div>
+    </div>
     
     <table id="tb-tree-table" class="table table-bordered">
         <thead>
@@ -102,7 +115,5 @@ Tree.parent_id = '{{ $current->id }}';
     text-align: left;
 }
 </style>
-
-
 
 @stop

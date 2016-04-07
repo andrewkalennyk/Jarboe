@@ -5,7 +5,9 @@ var Tree =
     admin_prefix: '',
     parent_id: 1,
     node: 1,
-    
+	action: 'open',
+	showTree:0,
+	
     setdbl: function() {
         return false;
         $(".jstree-anchor").on('dblclick', function(){ 

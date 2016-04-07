@@ -231,7 +231,74 @@ var Tree =
             }
         });
     }, // end doCreateNode
-    
+	showAllTree: function()
+	{
+		var tree_top = "#tree_top",
+			show_hide_tree = ".show_hide_tree";
+
+		if(Tree.action == 'open') {
+			if (Tree.showTree == 0) {
+				$(".tree_top_content").html("<p style='padding:10px'>Загрузка..</p>");
+
+				$.post("/admin/show_all_tree", {cache: true},
+					function (data) {
+						$(".tree_top_content").html(data);
+						$(tree_top).css({
+							'height': '300px',
+							'overflow-x': 'hidden',
+							'overflow-y': 'auto',
+							'background-color': '#fff',
+							'margin-bottom': '25px',
+							'border-bottom': 'solid #888 2px'
+						});
+						Tree.init();
+						Tree.showTree = 1;
+						Tree.action = 'close';
+						$(show_hide_tree).text("Спрятать дерево");
+					});
+			} else {
+				$(show_hide_tree).text("Спрятать дерево");
+				Tree.action = 'close';
+				$(tree_top).show();
+			}
+		} else {
+			$(show_hide_tree).text("Показать дерево");
+			Tree.action = 'open';
+			$(tree_top).hide();
+		}
+		/* $(".show_hide_tree").click(function(){
+		 var showTree = $(this).data('show'),
+		 action = $(this).data('action');
+		 console.log(action);
+		 if (action == 'open'){
+		 $(tree_top).toggle();
+		 $(tree_top).show();
+		 if($(show_hide_tree).text() == "Показать дерево") {
+		 $(show_hide_tree).text("Спрятать дерево");
+
+		 if (showTree == 0) {
+		 $(".tree_top_content").html("<p style='padding:10px'>Загрузка..</p>");
+
+		 $.post("/admin/show_all_tree", {},
+		 function (data) {
+		 $(".tree_top_content").html(data);
+		 Tree.init();
+		 $(".show_hide_tree").attr('data-show', 1);
+		 $(".show_hide_tree").attr('data-action', 'close');
+		 });
+		 } else {
+		 $(tree_top).show();
+		 }
+		 } else {
+		 $(".show_hide_tree").text("Показать дерево")
+		 }
+		 } else {
+		 $(tree_top).hide();
+		 $(".show_hide_tree").attr('data-action', 'open');
+		 }
+
+		 });*/
+	},
     showEditForm: function(id)
     {
         TableBuilder.showPreloader();

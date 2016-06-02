@@ -13,7 +13,7 @@
     <div>--}}{{--@include('admin::tree.tree_header')--}}{{--</div>
     <div style="padding: 0px; vertical-align: top;text-align: left;background-color: #fff;">--}}{{--@include('admin::tree.tree')--}}{{--</div>
     </div>--}}
-
+    @include('admin::tree.create_modal')
     <script>
         jQuery(document).on( "click", ".show_hide_tree", function(e)
         {

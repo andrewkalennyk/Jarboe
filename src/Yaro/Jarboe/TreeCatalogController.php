@@ -292,7 +292,7 @@ class TreeCatalogController implements IObservable
     private function handleShowCatalog()
     {
         $model = $this->model;
-        
+
         $tree = $model::all()->toHierarchy();
         
         $idNode  = Input::get('node', 1);
@@ -302,6 +302,23 @@ class TreeCatalogController implements IObservable
         foreach ($current->getAncestors() as $anc) {
             $parentIDs[] = $anc->id;
         }
+
+	    $children = $current->children();
+
+	    $actions = Config::get('jarboe::tree.show');
+
+	    if ($actions && $actions['check']() !== true && is_array($actions['check']())) {
+
+		    $arrIdsShow = $actions['check']();
+
+		    foreach ($actions['check']() as $id) {
+			    $arrIdsShow[] = $model::find($id)->getDescendants()->lists('id');
+		    }
+		    $arrIdsShow = array_flatten($arrIdsShow);
+		    $children = $children->whereIn('id', $arrIdsShow);
+	    }
+
+	    $current['children'] = $children->paginate(20);
 
         $templates = Config::get('jarboe::tree.templates');
         $template = Config::get('jarboe::tree.default');
@@ -323,7 +340,7 @@ class TreeCatalogController implements IObservable
         } elseif (false && $current->isLeaf()) {
             $content = 'ama leaf';
         } else {
-            $content = View::make('admin::tree.content', compact('current', 'template'));
+            $content = View::make('admin::tree.content', compact('current', 'template',"children"));
         }
         
         return View::make('admin::tree', compact('tree', 'content', 'current', 'parentIDs'));
